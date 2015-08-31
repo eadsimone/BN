@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+/**
+ *
+ * NOTICE OF LICENSE
+ *
+ * This file is subject to the license
+ * that is bundled with this package in the file LICENSE_Temgra.txt.
+ * If you did not receive a copy of the license, please send an email
+ * to info@temgra.com so we can send you a copy immediately.
+ *
+ * @copyright Copyright (c) 2009-2011 by Tania Alekova, temgra.com - Templates and Graphics Online Store (http://www.temgra.com) - All rights reserved.
+ * @license   http://www.temgra.com/license
+ * 
+ */
+-->
+<layout version="0.1.0">	
+	<default>
+		<reference name="head">
+			<action method="addItem" ifconfig="quickview/control/a01"><type>skin_css</type><name>css/quickView.css</name></action>
+			<action method="addItem" ifconfig="quickview/control/a01"><type>skin_js</type><name>js/quickView.js</name></action>
+		</reference>
+        <reference name="product_list">
+			<action method="setTemplate" ifconfig="quickview/control/a01"><template>quickview/list.phtml</template></action>
+        </reference>	
+	</default>	
+	<catalog_category_default>
+        <reference name="product_list">
+			<action method="setTemplate" ifconfig="quickview/control/a01"><template>quickview/list.phtml</template></action>
+        </reference>
+    </catalog_category_default>	
+</layout>

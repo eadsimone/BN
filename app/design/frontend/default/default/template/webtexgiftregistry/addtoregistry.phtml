@@ -1,0 +1,96 @@
+<?php
+/**
+ * Webtex
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.webtexsoftware.com/LICENSE.txt
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to info@webtexsoftware.com and we will send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade the extension to newer
+ * versions in the future. If you wish to customize the extension for your
+ * needs please refer to http://www.webtexsoftware.com for more information, 
+ * or contact us through this email: info@webtexsoftware.com.
+ *
+ * @category   design_default
+ * @package    Webtex_GiftRegistry
+ * @copyright  Copyright (c) 2012 Webtex Solutions, LLC (http://www.webtexsoftware.com/)
+ * @license    http://www.webtexsoftware.com/LICENSE.txt End-User License Agreement
+ */
+?>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+<?php $loadFromSSL = $_SERVER['SERVER_PORT']==443?true:false; ?>
+<?php $_registrys = $this->getRegistrys(); ?>
+<div class="page-title">
+    <h1><?php echo $this->__('Add Product to Registry') ?> 
+    <a href="" title="Close Window"><img src="<?php echo $this->getSkinUrl('images/btn_window_close.gif')?>" alt="" style="float:right;margin-top:3px;margin-right:3px;" onclick="hideLoader(); return false;"/></a></h1>
+</div>
+<table class="data-table">
+    <tr>
+        <td align="center">
+          <img src="<?php echo $this->getThumbUrl()?>" width="135px" alt="" />
+        </td>
+        <td>
+          <?php echo $this->getProductName() ?>
+        </td>
+    </tr>
+</table>
+<?php echo $this->getPagerHtml(); ?>
+<table class="data-table" id="my-registry-table">
+    <col width="1" />
+    <col />
+    <col width="1" />
+    <col width="1" />
+    <col width="1" />
+    <col width="1" />
+    <thead>
+        <tr>
+            <th><?php echo $this->__('Registry ID') ?></th>
+            <th><?php echo $this->__('Registry Title') ?></th>
+            <th><?php echo $this->__('Expired Date') ?></th>
+            <th><?php echo $this->__('Created') ?></th>
+            <th><?php echo $this->__('Active') ?></th>
+            <th><?php echo $this->__('Action') ?></th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php if($_registrys->getSize()): ?>
+        <?php $_odd = ''; ?>
+        <?php foreach ($_registrys as $_registry): ?>
+        <tr>
+            <td><?php echo $_registry->getGiftregistryId() ?></td>
+            <td><?php echo $_registry->getRegtitle() ?></td>
+            <td><span class="nobr"><?php echo $this->formatDate($_registry->getGiftExpArrivDate()) ?></span></td>
+            <td><span class="nobr"><?php echo $this->formatDate($_registry->getCreatedAt()) ?></span></td>
+            <td><em><?php echo ($_registry->getActive()==1) ? 'Active':'Inactive' ?></em></td>
+            <td class="a-center">
+                <ul>
+                    <li><a href="" class="link-compare" onclick="ajaxRequest('<?php echo $this->getUrl('webtexgiftregistry/index/addItem', array('product'=>$this->getProductId(),'registry_id'=>$_registry->getId(), '_secure'=>$loadFromSSL)) ?>', this); return false;"><?php echo $this->__('Add') ?></a></li>
+                </ul>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <tr>
+            <td colspan="6" class="empty-text a-center">
+               <p><?php echo $this->__('You have no registrys.'); ?></p>
+            </td>
+        </tr>
+    <?php endif ?>
+    </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="6" class="a-right">
+                </td>
+            </tr>
+        </tfoot>
+</table>
+<script type="text/javascript">decorateTable('my-registry-table');</script>
+<?php echo $this->getPagerHtml(); ?>

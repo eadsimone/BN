@@ -1,0 +1,335 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    Mage
+ * @package     Elayers_Authnet
+ * @copyright   Copyright (c) 2010 eLayers. (http://www.elayers.net)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?><?php if(!$this->isLogged()){ ?>
+	<script type="text/javascript">setLocation("<?php echo $this->getUrl('customer/account/login/'); ?>");</script>
+<?php } ?>
+<div class="page-title">
+    <h1>My Saved Credit Cards</h1>
+</div>
+<?php 
+
+$data = $this->getRequest()->getPost();
+
+if(isset($data['authorizenet_profile']) && $data['authorizenet_profile'] == "save"){
+	$savethisCC = $this->saveCC();
+	if(intval($savethisCC) > 0){ 
+	?>
+		<h2>Credit Card Saved Successfully!</h2>
+		<p>Please wait while you're redirected</p>
+		<script type="text/javascript">
+			setLocation("<?php echo $this->getUrl('authnet/customer/profiles/'); ?>");
+		</script>
+<?php 
+	}else{
+		?>
+		<script type="text/javascript">alert("<?php echo $savethisCC ?>");
+		setLocation("<?php echo $this->getUrl('authnet/customer/profiles/')?>");
+		</script>
+		<?php
+	}
+}else if(isset($data['ppDelete']) && $data['ppDelete'] == "yes"){
+	$deleteThisProfile = $this->deletePaymentProfile();
+	if($deleteThisProfile == "true"){ 
+	?>
+    	<h2>Credit Card Deleted Successfully!</h2>
+		<p>Please wait while you're redirected</p>
+<script type="text/javascript">
+			setLocation("<?php echo $this->getUrl('authnet/customer/profiles/'); ?>");
+		</script>
+    <?php 
+	}else{
+		echo '<script type="text/javascript">alert("'.$deleteThisProfile.'");
+		setLocation("'.$this->getUrl('authnet/customer/profiles/').'");
+		</script>';
+	}
+}else{ 
+
+?>
+<script type="text/javascript">
+ function SUEffect(element){
+	   new Effect.SlideUp(element);
+   }
+
+   function SDEffect(element){
+       new Effect.SlideDown(element);
+   }
+</script>
+<div id="addform" style="display:none;">
+<form id="form-validate" method="post" action="">
+    <div class="fieldset">
+        <input type="hidden" value="save" name="authorizenet_profile">
+        <h2 class="legend">Add a Credit Card</h2>
+        <ul class="form-list sp-methods">
+            <li>
+        <label class="required" for="firstname"><em>*</em>First Name</label>
+        <div class="input-box">
+            <input type="text" class="input-text required-entry" title="First Name" value="<?php echo Mage::getSingleton('customer/session')->getCustomer()->getFirstname(); ?>" name="authorizenet_fname" id="firstname" gtbfieldid="1">
+        </div>
+            </li>
+            <li>
+                <label class="required" for="lastname"><em>*</em>Last Name</label>
+                <div class="input-box">
+                <input type="text" class="input-text required-entry" title="Last Name" value="<?php echo Mage::getSingleton('customer/session')->getCustomer()->getLastname(); ?>" name="authorizenet_lname" id="lastname" gtbfieldid="2">
+                    <input type="hidden" class="input-text required-entry validate-email" title="Email Address" value="<?php echo Mage::getSingleton('customer/session')->getCustomer()->getEmail(); ?>" id="email" name="authorizenet_email" gtbfieldid="3">
+                </div>
+            </li>
+            <li>
+                <label class="required" for="lastname"><em>*</em>Address</label>
+                <div class="input-box">
+                <input type="text" class="input-text required-entry" title="Address" value="" name="authorizenet_address" id="address" gtbfieldid="4">
+                </div>
+            </li>
+            <li>
+                <label class="required" for="lastname"><em>*</em>City</label>
+                <div class="input-box">
+                <input type="text" class="input-text required-entry" title="City" value="" name="authorizenet_city" id="city" gtbfieldid="5">
+                </div>
+            </li>
+            <li>
+                <label class="required" for="lastname"><em>*</em>State</label>
+                <div class="input-box">
+                <select  name="authorizenet_state" id="state" title="State" class="validate-select" >
+              <option>Please select state</option>
+              <option value="Alabama">Alabama</option>
+              <option value="Alaska">Alaska</option>
+              <option value="American Samoa">American Samoa</option>
+              <option value="Arizona">Arizona</option>
+              <option value="Arkansas">Arkansas</option>
+              <option value="Armed Forces Africa">Armed Forces Africa</option>
+              <option value="Armed Forces Americas">Armed Forces Americas</option>
+              <option value="Armed Forces Canada">Armed Forces Canada</option>
+              <option value="Armed Forces Europe">Armed Forces Europe</option>
+              <option value="Armed Forces Middle East">Armed Forces Middle East</option>
+              <option value="Armed Forces Pacific">Armed Forces Pacific</option>
+              <option value="California">California</option>
+              <option value="Colorado">Colorado</option>
+              <option value="Connecticut">Connecticut</option>
+              <option value="Delaware">Delaware</option>
+              <option value="District of Columbia">District of Columbia</option>
+              <option value="Federated States Of Micronesia">Federated States Of Micronesia</option>
+              <option value="Florida">Florida</option>
+              <option value="Georgia">Georgia</option>
+              <option value="Guam">Guam</option>
+              <option value="Hawaii">Hawaii</option>
+              <option value="Idaho">Idaho</option>
+              <option value="Illinois">Illinois</option>
+              <option value="Indiana">Indiana</option>
+              <option value="Iowa">Iowa</option>
+              <option value="Kansas">Kansas</option>
+              <option value="Kentucky">Kentucky</option>
+              <option value="Louisiana">Louisiana</option>
+              <option value="Maine">Maine</option>
+              <option value="Marshall Islands">Marshall Islands</option>
+              <option value="Maryland">Maryland</option>
+              <option value="Massachusetts">Massachusetts</option>
+              <option value="Michigan">Michigan</option>
+              <option value="Minnesota">Minnesota</option>
+              <option value="Mississippi">Mississippi</option>
+              <option value="Missouri">Missouri</option>
+              <option value="Montana">Montana</option>
+              <option value="Nebraska">Nebraska</option>
+              <option value="Nevada">Nevada</option>
+              <option value="New Hampshire">New Hampshire</option>
+              <option value="New Jersey">New Jersey</option>
+              <option value="New Mexico">New Mexico</option>
+              <option value="New York">New York</option>
+              <option value="North Carolina">North Carolina</option>
+              <option value="North Dakota">North Dakota</option>
+              <option value="Northern Mariana Islands">Northern Mariana Islands</option>
+              <option value="Ohio">Ohio</option>
+              <option value="Oklahoma">Oklahoma</option>
+              <option value="Oregon">Oregon</option>
+              <option value="Palau">Palau</option>
+              <option value="Pennsylvania">Pennsylvania</option>
+              <option value="Puerto Rico">Puerto Rico</option>
+              <option value="Rhode Island">Rhode Island</option>
+              <option value="South Carolina">South Carolina</option>
+              <option value="South Dakota">South Dakota</option>
+              <option value="Tennessee">Tennessee</option>
+              <option value="Texas">Texas</option>
+              <option value="Utah">Utah</option>
+              <option value="Vermont">Vermont</option>
+              <option value="Virgin Islands">Virgin Islands</option>
+              <option value="Virginia">Virginia</option>
+              <option value="Washington">Washington</option>
+              <option value="West Virginia">West Virginia</option>
+              <option value="Wisconsin">Wisconsin</option>
+              <option value="Wyoming">Wyoming</option>
+            </select>
+                </div>
+            </li>
+            <li>
+                <label class="required" for="lastname"><em>*</em>Zip</label>
+                <div class="input-box">
+                <input type="text" class="input-text required-entry" title="Zip" value="" name="authorizenet_zip" id="zip" gtbfieldid="5">
+                </div>
+            </li>
+            <li>
+                &nbsp;
+            </li>
+
+    <li>
+        <label class="required" for="authorizenet_cc_type"><em>*</em>Credit Card Type</label>
+        <div class="input-box">
+            <select class="required-entry validate-cc-type-select" name="authorizenet_cctype" id="authorizenet_cc_type" autocomplete="off">
+                <option value="">--Please Select--</option>
+                <option value="AE">American Express</option>
+                <option value="VI">Visa</option>
+                <option value="MC">MasterCard</option>
+                <option value="DI">Discover</option>
+            </select>
+        </div>
+    </li>
+    <li>
+        <label class="required" for="authorizenet_cc_number"><em>*</em>Credit Card Number</label>
+        <div class="input-box">
+            <input type="text" value="" class="required-entry input-text validate-cc-number validate-cc-type" title="Credit Card Number" name="authorizenet_ccno" id="authorizenet_cc_number" autocomplete="off">
+        </div>
+    </li>
+    <li id="authorizenet_cc_type_exp_div">
+        <label class="required" for="authorizenet_expiration"><em>*</em>Expiration Date</label>
+        <div class="input-box">
+            <div class="v-fix">
+                <select class="month validate-cc-exp required-entry" name="authorizenet_month" id="authorizenet_expiration" autocomplete="off">
+                                    <option value="">Month</option>
+                                    <option value="1">01 - January</option>
+                                    <option value="2">02 - February</option>
+                                    <option value="3">03 - March</option>
+                                    <option value="4">04 - April</option>
+                                    <option value="5">05 - May</option>
+                                    <option value="6">06 - June</option>
+                                    <option value="7">07 - July</option>
+                                    <option value="8">08 - August</option>
+                                    <option value="9">09 - September</option>
+                                    <option value="10">10 - October</option>
+                                    <option value="11">11 - November</option>
+                                    <option value="12">12 - December</option>
+                                </select>
+            </div>
+            <div class="v-fix">
+                                <select class="year required-entry" name="authorizenet_yr" id="authorizenet_expiration_yr" autocomplete="off">
+                                    <option value="">Year</option>
+                                    <option value="2011">2011</option>
+                                    <option value="2012">2012</option>
+                                    <option value="2013">2013</option>
+                                    <option value="2014">2014</option>
+                                    <option value="2015">2015</option>
+                                    <option value="2016">2016</option>
+                                    <option value="2017">2017</option>
+                                    <option value="2018">2018</option>
+                                    <option value="2019">2019</option>
+                                    <option value="2020">2020</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+                                    <option value="2027">2027</option>
+                                    <option value="2028">2028</option>
+                                    <option value="2029">2029</option>
+                                    <option value="2030">2030</option>
+                                </select>
+            </div>
+        </div>
+    </li>
+        
+    	
+    <li>
+    <div id="nickname" style="display: block;">
+    <label class="required" for="authorizenet_nickname"><em>*</em>Nickname</label>
+    <div class="input-box">
+        <input type="text" value="" class="input-text required-entry" title="Nickname" name="authorizenet_nickname" id="authorizenet_nickname" autocomplete="off">
+    </div>
+    </div>
+
+
+	</li>
+            
+        </ul>
+    </div>
+    
+<div class="buttons-set">
+        <p class="required">* Required Fields</p>
+        <button class="button" title="Cancel" type="button" onclick="SUEffect('addform');"><span><span>Cancel</span></span></button> &nbsp; <button class="button" title="Save" type="submit"><span><span>Submit</span></span></button>
+    </div><br />
+<br />
+<br />
+
+</form>
+
+<script type="text/javascript">
+//< ![CDATA[
+var customForm = new VarienForm('form-validate');
+//]]>
+</script>
+</div>
+<div class="profiles dashboard">
+<div class="box-account box-recent">
+    <div class="box-head">
+        <h2>Saved Profiles</h2>
+        <a href="javascript:;" onclick="SDEffect('addform');">Add a Credit Card Profile</a>
+    </div>
+    <?php $profiles = $this->getProfiles(); 
+	
+	if(isset($profiles) && !empty($profiles) && is_array($profiles)){ ?>
+    <table id="my-profiles-table" class="data-table">
+    <col>
+    <col>
+    <col>
+    <col>
+    <col width="1">
+        <thead>
+            <tr class="first last">
+                <th>Nickname</th>
+                <th>Card First Name</th>
+                <th>Card Last Name</th>
+                <th>Last 4 Digits</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($profiles as $cust_profile_id => $_nickname){ 
+			$ccDetail = $this->getPaymentProfile($cust_profile_id);
+		?>
+           <tr class="first odd">
+                    <td><span class="nobr"><?php echo $_nickname ?></span></td>
+                    <td><?php echo $ccDetail['fname']; ?></td>
+                    <td><?php echo $ccDetail['lname']; ?></td>
+                    <td><?php echo $ccDetail['no']; ?></td>
+                    <td class="a-center last"><form method="post" action=""><input type="hidden" name="ppDelete" value="yes" /><input type="hidden" name="ppID" value="<?php echo $cust_profile_id ?>" /><?php if(count($profiles) < 2){?><input type="hidden" name="deleteProfile" value="yes" /><?php } ?><button class="button" title="Delete" onclick="return confirm('Are you sure you want to delete this Credit Card?')" type="submit"><span><span>Delete</span></span></button></form></td>
+           </tr>
+         <?php } ?>        
+        </tbody>
+    </table>
+    <script type="text/javascript">decorateTable('my-profiles-table')</script>
+    <?php }else{ ?>
+    <p>No Profiles saved yet. <a href="javascript:;" onclick="SDEffect('addform');">Create one now</a>.</p>
+    <?php } ?>
+</div>
+
+</div>
+<?php } ?>

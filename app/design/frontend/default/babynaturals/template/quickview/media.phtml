@@ -1,0 +1,42 @@
+<?php
+/**
+ *
+ * NOTICE OF LICENSE
+ *
+ * This file is subject to the license
+ * that is bundled with this package in the file LICENSE_Temgra.txt.
+ * If you did not receive a copy of the license, please send an email
+ * to info@temgra.com so we can send you a copy immediately.
+ *
+ * @copyright Copyright (c) 2009-2011 by Tania Alekova, temgra.com - Templates and Graphics Online Store (http://www.temgra.com) - All rights reserved.
+ * @license   http://www.temgra.com/license
+ * 
+ */
+?>
+<?php $_product=$this->getProduct();$_helper=$this->helper('catalog/output');$a22=$this->helper('quickview')->get('a07');$a23=$this->helper('quickview')->get('a08');?>
+<?php if ($_product->getImage() != 'no_selection' && $_product->getImage()): ?>
+    <?php
+        $_img = '<img id="image" src="'.$this->helper('catalog/image')->init($_product, 'image')->resize($a22).'" alt="'.$this->htmlEscape($this->getImageLabel()).'" title="'.$this->htmlEscape($this->getImageLabel()).'" />';
+        echo $_helper->productAttribute($_product, $_img, 'image')
+    ?>
+<?php else: ?>
+    <?php
+        $_img = '<img src="'.$this->helper('catalog/image')->init($_product, 'image')->resize($a22).'" alt="'.$this->htmlEscape($_product->getImageLabel()).'" />';
+        echo $_helper->productAttribute($_product, $_img, 'image')
+    ?>
+<?php endif; ?>
+<?php if (count($this->getGalleryImages()) > 0): ?>
+<div class="more-views" id="more-views">
+    <h4><?php echo $this->__('More Views') ?></h4>	
+    <ul>
+    <?php  $i=0; ?>
+    <?php foreach ($this->getGalleryImages() as $_image): ?>
+		<li class="<?php echo ($i%2)?'last':'first';?>">
+            <img class="additional-image" onmouseover="qv.a17();var img=new Image();img.src='<?php echo $this->helper('catalog/image')->init($_product, 'thumbnail', $_image->getFile())->resize($a22)?>';qv.a10(img, this)" src="<?php echo $this->helper('catalog/image')->init($_product, 'thumbnail', $_image->getFile())->resize($a23); ?>" alt="<?php echo $this->htmlEscape($_image->getLabel()) ?>" title="<?php echo $this->htmlEscape($_image->getLabel()) ?>" />
+        </li>
+		<?php $i++; ?>
+    <?php endforeach; ?>
+    
+    </ul>
+</div>
+<?php endif; ?>

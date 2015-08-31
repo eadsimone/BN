@@ -1,0 +1,132 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2011 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Category layered navigation
+ *
+ * @see Mage_Catalog_Block_Layer_View
+ */
+?>
+
+
+<div class="block block-layered-nav">
+	<div class="block-content">
+	          <dl>
+			  <dd>
+			  <ol>
+<?php
+$obj = new Mage_Catalog_Block_Navigation();
+$cur_cat = $obj->getCurrentCategory();
+$curent_cat_id = $cur_cat->getId();
+$parent = Mage::getModel('catalog/category')->load($curent_cat_id);
+
+//echo $parentId;
+//echo '<pre>';
+//print_r($this->getParentTopCategory($parent));
+
+$p = $this->getParentTopCategory($parent);
+if($curent_cat_id != $p->getId()){
+//echo '<li class="amshopby-cat amshopby-cat-level-1">'.$p->getName().'</li>';
+echo '<li class="amshopby-cat amshopby-cat-level-1"><a href="'.$p->getURL().'">'.$p->getName().'</a></li>';
+}
+else{
+	echo '<li class="amshopby-cat amshopby-cat-level-1">'.$p->getName().'</li>';
+}
+//echo $p->getName();
+$pid = $p->getId();
+$cat = Mage::getModel('catalog/category')->load($pid);
+$subcats = $cat->getChildren();
+
+foreach(explode(',',$subcats) as $subCatid)
+{
+
+  $_category = Mage::getModel('catalog/category')->load($subCatid);
+  if($_category->getIsActive()) {
+  
+	$active1 = '';
+			//echo $_sub_category->getId();
+			if($cur_cat->getId() == $_category->getId()){
+					$active1 = 'active';
+				}
+    echo '<li class="amshopby-cat amshopby-cat-level-2 '.$active1.'"><a href="'.$_category->getURL().'" title="'.$_category->getName().'">'.$_category->getName().'</a>';
+    $sub_cat = Mage::getModel('catalog/category')->load($_category->getId());
+    $sub_subcats = $sub_cat->getChildren();
+    foreach(explode(',',$sub_subcats) as $sub_subCatid)
+    {
+          $_sub_category = Mage::getModel('catalog/category')->load($sub_subCatid);
+          if($_sub_category->getIsActive()) {
+			$active = '';
+			//echo $_sub_category->getId();
+			if($cur_cat->getId() == $_sub_category->getId()){
+					$active = 'active';
+				}
+              echo '<li class="amshopby-cat amshopby-cat-level-3 '.$active.'" title="'.$_sub_category->getName().'"><a href="'.$_sub_category->getURL().'">'.$_sub_category->getName().'</a></li>';
+              $sub_sub_cat = Mage::getModel('catalog/category')->load($sub_subCatid);
+              $sub_sub_subcats = $sub_sub_cat->getChildren();
+              foreach(explode(',',$sub_sub_subcats) as $sub_sub_subCatid)
+              {
+                $_sub_sub_category = Mage::getModel('catalog/category')->load($sub_sub_subCatid);
+                if($_sub_sub_category->getIsActive()) {
+                    echo '<li class="sub_cat"><a href="'.$_sub_sub_category->getURL().'">'.$_sub_sub_category->getName().'</a></li>';
+                }
+              }
+           }
+     }
+     echo '</li>';
+  }
+}
+
+?>
+</ol>
+</dd>
+</dl>
+</div>
+</div>
+<?php/* if($this->canShowBlock()): ?>
+<div class="block block-layered-nav">
+
+    <div class="block-content">
+        <?php echo $this->getStateHtml() ?>
+        <?php if($this->canShowOptions()): ?>
+            
+            <dl id="narrow-by-list">
+                <?php $_filters = $this->getFilters() ?>
+                <?php foreach ($_filters as $_filter): ?>
+                <?php if($_filter->getItemsCount()): ?>
+                <?php //if($_filter->getName() != "Category"){ ?>
+                    <dt><?php //echo $this->__($_filter->getName()) ?></dt>
+                    <dd><?php echo $_filter->getHtml() ?></dd>
+                <?php //} 
+                endif; ?>
+                <?php endforeach; ?>
+
+            </dl>
+            <script type="text/javascript">decorateDataList('narrow-by-list')</script>
+        <?php endif; ?>
+    </div>
+</div>
+<?php endif; */?>

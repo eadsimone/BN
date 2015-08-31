@@ -1,0 +1,319 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_modern
+ * @copyright   Copyright (c) 2009 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/**
+ * Product view template
+ *
+ * @see Mage_Catalog_Block_Product_View
+ * @see Mage_Review_Block_Product_View
+ */
+?>
+<?php
+    $_helper = $this->helper('catalog/output');
+    $_product = $this->getProduct();
+?>
+<?php //echo "<pre>"; print_r($_product->getTypeId()); ?>
+<script type="text/javascript">
+    var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
+</script>
+
+<script>
+			jQuery.noConflict(); 
+			jQuery(document).ready(function() {
+				jQuery('.bn-brand-nav-tabs > li > a').click(function(event){
+					event.preventDefault();//stop browser to take action for clicked anchor
+					
+					//get displaying tab content jQuery selector
+					var active_tab_selector = jQuery('.bn-brand-nav-tabs > li.active > a').attr('href');					
+					
+					//find actived navigation and remove 'active' css
+					var actived_nav = jQuery('.bn-brand-nav-tabs > li.active');
+					actived_nav.removeClass('active');
+					
+					//add 'active' css into clicked navigation
+					jQuery(this).parents('li').addClass('active');
+					
+					//hide displaying tab content
+					jQuery(active_tab_selector).removeClass('active');
+					jQuery(active_tab_selector).addClass('hide');
+					
+					//show target tab content
+					var target_tab_selector = jQuery(this).attr('href');
+					jQuery(target_tab_selector).removeClass('hide');
+					jQuery(target_tab_selector).addClass('active');
+				});
+			});
+		</script>
+<div class="bn-product-view new-product-wishlist">
+  <div class="bn-product-view-left">
+    <div class="bn-product-img-box"> <?php echo $this->getChildHtml('media') ?> </div>
+  <?php /*  <div class="bn-product-name">
+      <h1><?php echo $_helper->productAttribute($_product, $_product->getName(), 'name') ?></h1>
+      <p>by <?php echo $_product->getAttributeText('bn_brand');?></p> 
+    </div> */ ?>
+	 <form action="<?php echo $this->getAddToCartUrl($_product) ?>" method="post" id="product_addtocart_form"<?php if($_product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
+    <div class="bn-product-price"> 
+      <?php //echo $this->getChildHtml('alert_urls') ?>
+      <!-- Note - Multiple pieces of info in here --> 
+      <?php echo $this->getChildHtml('product_type_data') ?>
+      <?php //echo $this->getTierPriceHtml() ?>
+    </div>
+    <div class="bn-add-to-cart">
+     
+        <div class="no-display">
+          <input type="hidden" name="product" value="<?php echo $_product->getId() ?>" />
+          <input type="hidden" name="related_product" id="related-products-field" value="" />
+        </div>
+		
+				
+        
+
+				
+			
+
+
+<?php	/* if (!$this->hasOptions()):?>
+        <div class="add-to-box">
+          <?php if($_product->isSaleable()): ?>
+          <?php echo $this->getChildHtml('addtocart') ?>
+          <?php if( $this->helper('wishlist')->isAllow() || $_compareUrl=$this->helper('catalog/product_compare')->getAddUrl($_product)): ?>
+          <!--<span class="or"><?php echo $this->__('OR') ?></span>-->
+          <?php endif; ?>
+          <?php endif; ?>
+          <?php echo $this->getChildHtml('addto') ?> </div>
+        <?php else:?>
+        <?php echo $this->getChildHtml('addto') ?>
+        <?php endif; ?>
+        <?php if ($_product->isSaleable() && $this->hasOptions()):?>
+        <?php echo $this->getChildChildHtml('container2', '', true, true) ?>
+        <?php endif; */ ?>
+      
+	  
+
+	  
+	   <a class="add-to-bag" href = "javascript:void(0)" onclick = "document.getElementById('light2').style.display='block';document.getElementById('fade').style.display='block'">
+		
+		<button type="button" title="<?php  echo $this->__('Add To Shopping Bag') ?>" class="button btn-cart" ><span><span><?php echo $this->__('Add To Shopping Bag') ?></span></span></button>
+		
+		</a>
+		
+		<div id="light2" class="white_content">
+		
+					<div class="tab">
+						<a class="active" id="tabfirst"  href = "javascript:void(0)" onclick = "document.getElementById('light3').style.display='block';document.getElementById('fade').style.display='block';document.getElementById('light4').style.display='none'; activefirst();"><?php echo $this->__('Overview'); ?></a>
+						
+						<a class="" id="tabsecond" href = "javascript:void(0)" onclick = "document.getElementById('light4').style.display='block';document.getElementById('fade').style.display='block'; document.getElementById('light3').style.display='none'; activesecond();"><?php echo $this->__('Description'); ?></a>
+					</div>
+					
+					<a class="tab-close" href = "javascript:void(0)" onclick = "document.getElementById('light2').style.display='none';document.getElementById('fade').style.display='none'">Close</a>
+					<div class="clear"></div>
+						
+						<div id="light3" class="tab-content"> 
+							<div class="detail-popleft">
+									<?php echo $this->getChildHtml('media-add'); ?>  
+							</div>
+							<div class="detail-popright">
+								<h1><?php echo $_helper->productAttribute($_product, $_product->getName(), 'name') ?></h1>
+								<?php echo $this->getPriceHtml($_product, true) ?>
+								
+								
+								<?php if (!$this->hasOptions()):?>
+								 <?php if($_product->isSaleable()): ?>
+								  <?php echo $this->getChildHtml('addtocart') ?>
+								  <?php if( $this->helper('wishlist')->isAllow() || $_compareUrl=$this->helper('catalog/product_compare')->getAddUrl($_product)): ?>
+								  <!--<span class="or"><?php echo $this->__('OR') ?></span>-->
+								  <?php endif; ?>
+								  <?php endif; ?>
+									<?php endif; ?>
+								<?php //if ($_product->isSaleable() && $this->hasOptions()):?>
+								<?php //echo $this->getChildChildHtml('container2', '', true, true) ?>
+								<?php //endif;?>
+								
+								
+								
+									<?php if ($_product->isSaleable() && $this->hasOptions()):?>
+										<?php echo $this->getChildChildHtml('container2', '', true, true) ?>
+									<?php endif;?>
+							
+								
+							</div>
+						
+							<div class="clear"></div>
+						</div>
+						
+						
+						
+						
+							<div id="light4" class="tab-content" style="display:none;">
+								<h1><?php echo $_helper->productAttribute($_product, $_product->getName(), 'name') ?></h1>
+								<p><?php echo $_helper->productAttribute($_product, $_product->getDescription(), 'description') ?></p>
+							
+							</div>
+						
+						
+				
+		
+				
+						
+						
+		
+		
+		
+		</div>
+		<div id="fade" class="black_overlay"></div>
+			
+			 <div class="add-to-box">
+				<?php if (!$this->hasOptions()):?>
+                <?php echo $this->getChildHtml('addto') ?> 
+			<?php else:?>
+				<?php echo $this->getChildHtml('addto') ?>
+        <?php endif; ?>
+			</div>
+	  
+    </div>
+	</form>
+ <?php /* <div class="bn-suggestions"><p>may we also suggest...</p>
+
+  <div style="position:relative;bottom:20px;"><img src="<?php echo $this->getSkinUrl('images/crosssell-ph-image.jpg') ?>" /></div></div>
+    </div> */ ?>
+  </div>
+  <div class="bn-product-view-right">
+      <div class="page-title">
+       <h1><?php echo $_helper->productAttribute($_product, $_product->getName(), 'name') ?></h1>
+      <p>by <?php echo $_product->getAttributeText('bn_brand'); ?> </p> 
+	</div>
+    <?php if ($_product->getShortDescription()):?>
+    <div class="bn-short-description">
+    <?php /*  <h2>why parents <span class="pink-text">(and we)</span> love it...</h2> */ ?>
+       <div class="std"><?php echo $_helper->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description') ?></div>
+    </div>
+    <?php endif;?>
+    <div class="bn-product-collateral fine-print"> 
+	<h3>the fine print...</h3>
+	<div class="print-section">
+    <a class="why-to-buy title-ingredients" href="#" onclick="return false;"><span>Ingredients</span>
+         <div class="why-to-buy-tooltip ingredients">
+             <h2><?php echo $this->__('Ingredients') ?></h2>
+             <div class="tab-container">
+          <?php echo $_product->getResource()->getAttribute('bn_ingredients')->getFrontend()->getValue($_product)?>
+         </div>
+         </div></a>
+        <a class="why-to-buy title-origin" href="#" onclick="return false;"><span>Origin</span>
+        <div class="why-to-buy-tooltip origin">
+            <h2><?php echo $this->__('Origin') ?></h2>
+            <div class="tab-container">
+        <?php echo $_product->getResource()->getAttribute('bn_origin')->getFrontend()->getValue($_product)?>
+        </div>
+       </div></a>
+         <a class="why-to-buy title-care" href="#" onclick="return false;"><span>Care</span>
+        <div class="why-to-buy-tooltip care">
+            <h2><?php echo $this->__('Care') ?></h2>
+            <div class="tab-container">
+          <?php /*  <?php echo $_product->getResource()->getAttribute('bn_care')->getFrontend()->getValue($_product)?> */ ?>
+           <?php echo $_product->getResource()->getAttribute('bn_care')->getFrontend()->getValue($_product)?>
+        </div>
+        </div></a>	
+	</div>
+	<?php echo $this->getChildHtml('info_tabs') ?> <?php echo $this->getChildHtml('product_additional_data') ?> </div>
+	
+   <?php
+	$brand_cms = "cms-product-".$_product->getAdminAttributeText('bn_brand');
+	?>
+       </div> 
+    <div class="clear"></div>
+    <div class="bn-product-brand-info">
+   
+    <div>
+			<ul class="bn-brand-nav bn-brand-nav-tabs">
+				<li class="active"><a href="#bn-brand-tab1">More On The Product</a></li>
+				<li><a href="#bn-brand-tab2">More On The Brand</a></li>				
+			</ul>	
+		</div>
+		<div id="bn-brand-tab1" class="bn-brand-tab-content active">
+                    <div><?php echo $_product->getDescription(); ?></div>
+		</div>
+		<div id="bn-brand-tab2" class="bn-brand-tab-content hide">
+			<div>
+				<?php //echo $this->getLayout()->createBlock('cms/block')->setBlockId($brand_cms)->toHtml(); ?> 
+				<?php //echo $_product->getAttributeText('bn_brand').':';
+				//echo $_product->getResource()->getAttribute('bn_brand')->getFrontend()->getValue($_product); ?>
+	<?php			
+	$_product = Mage::getModel('catalog/product')->load($_product->getId());
+$manufacturer = $_product->getBnBrand();
+//echo $manufacturer;
+
+
+$optionData = Mage::getResourceModel('attributeicons/data_collection')->addFieldToFilter('attribute_code', 'bn_brand')
+->addFieldToFilter('option_id' ,$manufacturer);
+//$optionData = Mage::getResourceModel('attributeicons/data_collection');
+//echo "<pre>";			
+//print_r($optionData->getData());
+			//$optionData['attribute_id'] = $this->getAttributeId()
+foreach($optionData as $option){
+//print_r($option->getData());
+echo $option->getDescription();
+
+} ?>
+			</div>
+		</div>
+  	</div>
+    
+            
+    <div class="clear"></div>
+      <?php echo $this->getLayout()->CreateBlock('catalog/product_list_upsell')->setTemplate("catalog/product/list/upsell.phtml")->ToHtml(); ?>
+  <script type="text/javascript">
+    //<![CDATA[
+            var productAddToCartForm = new VarienForm('product_addtocart_form');
+            productAddToCartForm.submit = function(){
+                    if (this.validator.validate()) {
+                            this.form.submit();
+                    }
+            }.bind(productAddToCartForm);
+    //]]>
+    </script>
+	
+<script type="text/javascript">
+function activefirst()
+{
+	if(document.getElementById('light3').style.display='block'){
+	document.getElementById("tabfirst").className = " active";
+	document.getElementById("tabsecond").className -= " active";
+	}
+	
+	
+}
+
+function activesecond()
+{
+	if(document.getElementById('light4').style.display='block'){
+	document.getElementById("tabsecond").className = " active";
+	document.getElementById("tabfirst").className -= " active";
+	}
+
+}
+
+</script>	
+</div>

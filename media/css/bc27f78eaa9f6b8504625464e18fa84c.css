@@ -1,0 +1,3513 @@
+/*
+ * jQuery FlexSlider v2.0
+ * http://www.woothemes.com/flexslider/
+ *
+ * Copyright 2012 WooThemes
+ * Free to use under the GPLv2 license.
+ * http://www.gnu.org/licenses/gpl-2.0.html
+ *
+ * Contributing author: Tyler Smith (@mbmufffin)
+ */
+
+ 
+/* Browser Resets */
+.flex-container a:active,
+.flexslider a:active,
+.flex-container a:focus,
+.flexslider a:focus  {outline: none;}
+.slides,
+.flex-control-nav,
+.flex-direction-nav {margin: 0; padding: 0; list-style: none;} 
+
+/* FlexSlider Necessary Styles
+*********************************/ 
+.flexslider {margin: 0; padding: 0;}
+.flexslider .slides > li {display: none; -webkit-backface-visibility: hidden;} /* Hide the slides before the JS is loaded. Avoids image jumping */
+.flexslider .slides img {width: 100%; display: block;}
+.flex-pauseplay span {text-transform: capitalize;}
+
+/* Clearfix for the .slides element */
+.slides:after {content: "."; display: block; clear: both; visibility: hidden; line-height: 0; height: 0;} 
+html[xmlns] .slides {display: block;} 
+* html .slides {height: 1%;}
+
+/* No JavaScript Fallback */
+/* If you are not using another script, such as Modernizr, make sure you
+ * include js that eliminates this class on page load */
+.no-js .slides > li:first-child {display: block;}
+
+
+/* FlexSlider Default Theme
+*********************************/
+.flexslider {margin: 0 0 0px; /*background: #fff; border: 4px solid #fff;*/ position: relative; /*-webkit-border-radius: 4px; -moz-border-radius: 4px; -o-border-radius: 4px; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,.2); -webkit-box-shadow: 0 1px 4px rgba(0,0,0,.2); -moz-box-shadow: 0 1px 4px rgba(0,0,0,.2); -o-box-shadow: 0 1px 4px rgba(0,0,0,.2);*/ zoom: 1;}
+.flex-viewport {max-height: 2000px; -webkit-transition: all 1s ease; -moz-transition: all 1s ease; transition: all 1s ease;}
+.loading .flex-viewport {max-height: 300px;}
+.flexslider .slides {zoom: 1;}
+
+.carousel li {margin-right: 5px}
+
+
+/* Direction Nav */
+.flex-direction-nav a {width: 30px; height: 30px; margin: -20px 0 0; display: block; /*background: url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bg_direction_nav.png) no-repeat 0 0; position: absolute; top: 50%; cursor: pointer;*/ text-indent: -9999px; opacity: 0; -webkit-transition: all .3s ease;}
+/*.flex-direction-nav .flex-next {background-position: 100% 0; right: -36px; }
+.flex-direction-nav .flex-prev {left: -36px;}
+.flexslider:hover .flex-next {opacity: 0.8; right: 5px;}
+.flexslider:hover .flex-prev {opacity: 0.8; left: 5px;}
+.flexslider:hover .flex-next:hover, .flexslider:hover .flex-prev:hover {opacity: 1;}
+.flex-direction-nav .disabled {opacity: .3!important; filter:alpha(opacity=30); cursor: default;}*/
+
+/* Control Nav */
+.flex-control-nav {width: 100%; position: absolute; bottom: 22px; text-align: center;}
+.flex-control-nav li {margin: 0 1px; display: inline-block; zoom: 1; *display: inline;}
+.flex-control-paging li a {width: 11px; height: 11px; display: block; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/main-slider-dot.png) no-repeat left top; cursor: pointer; text-indent: -9999px; /*-webkit-border-radius: 20px; -moz-border-radius: 20px; -o-border-radius: 20px; border-radius: 20px;*/}
+.flex-control-paging li a:hover, .flex-control-paging li a.flex-active { background-position:left bottom; }
+/* { background: #000; background: #2e3d6a; cursor: default; }*/
+
+.flex-control-thumbs {margin: 5px 0 0; position: static; overflow: hidden;}
+.flex-control-thumbs li {width: 25%; float: left; margin: 0;}
+.flex-control-thumbs img {width: 100%; display: block; opacity: .7; cursor: pointer;}
+.flex-control-thumbs img:hover {opacity: 1;}
+.flex-control-thumbs .active {opacity: 1; cursor: default;}
+
+@media screen and (max-width: 860px) {
+  .flex-direction-nav .flex-prev {opacity: 1; left: 0;}
+  .flex-direction-nav .flex-next {opacity: 1; right: 0;}
+}
+
+.flex-direction-nav { display:none; }
+@CHARSET "UTF-8";
+
+
+.sbHolder{
+	background-color: #fff;
+	border: none;
+	font-family: 'Museo-500', Arial, sans-serif;
+	font-size: 11px;
+	font-weight: normal;
+	height: 22px;
+	position: relative;
+	width: 138px;
+}
+.sbHolder:focus .sbSelector{
+	
+}
+.sbSelector{
+	display: block;
+	height: 22px;
+	left: 0;
+	line-height: 22px;
+	outline: none;
+	overflow: hidden;
+	position: absolute;
+	text-indent: 10px;
+	top: 0;
+	width: 138px;
+}
+.sbSelector:link, .sbSelector:visited, .sbSelector:hover{
+	color: #2b3a65;
+	outline: none;
+	text-decoration: none;
+}
+.sbToggle{
+	background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/select-down-arrow.png) no-repeat 0 0;
+	display: block;
+	height: 22px;
+	outline: none;
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 22px;
+}
+.sbToggle:hover{
+	background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/select-down-arrow-hover.png) no-repeat 0 0;
+}
+.sbToggleOpen{
+	background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/select-up-arrow.png) no-repeat left 0 0;
+}
+.sbToggleOpen:hover{
+	background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/select-up-arrow-hover.png) no-repeat 0 0;
+}
+.sbHolderDisabled{
+	background-color: #3C3C3C;
+	border: solid 1px #515151;
+}
+.sbHolderDisabled .sbHolder{
+	
+}
+.sbHolderDisabled .sbToggle{
+	
+}
+.sbOptions{
+	background-color: #fff;
+	border: solid 1px #9dcd2a;
+	list-style: none;
+	left: -1px;
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	top: 22px;
+	width: 200px;
+	z-index: 6;
+	overflow-y: auto;
+}
+.sbOptions li{
+	padding: 0 7px;
+}
+.sbOptions a{
+	/*border-bottom: dotted 1px #9dcd2a;*/
+	display: block;
+	outline: none;
+	padding: 4px 8px;
+}
+.sbOptions a:link, .sbOptions a:visited{
+	color: #2b3a65;
+	text-decoration: none;
+}
+.sbOptions a:hover,
+.sbOptions a:focus,
+.sbOptions a.sbFocus{
+	color: #dd5271;
+}
+.sbOptions li.last a{
+	border-bottom: none;
+}
+.sbOptions .sbDisabled{
+	border-bottom: dotted 1px #515151;
+	color: #999;
+	display: block;
+	padding: 7px 0 7px 3px;
+}
+.sbOptions .sbGroup{
+	border-bottom: dotted 1px #515151;
+	color: #EBB52D;
+	display: block;
+	font-weight: bold;
+	padding: 7px 0 7px 3px;
+}
+.sbOptions .sbSub{
+	padding-left: 17px;
+}
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_modern
+ * @copyright   Copyright (c) 2009 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/* Widgets =============================================================================== */
+.widget { display:inline; }
+.widget .widget-title { clear:both; padding:15px 0 0; margin:0 0 7px; }
+.widget .widget-title h2 { font-size:15px; font-weight:bold; color:#e25203; }
+
+.widget .mini-products-images-list .product-image { display:block; width:76px; height:76px; border:1px solid #a9a9a9; margin:0 auto; }
+.widget .mini-products-images-list li.item { float:left; width:77px; height:77px; border:0 !important; padding:5px 9px !important; }
+
+/* Widget: Catalog New Proructs List */
+.widget-new-products { display:block; }
+.col-main .widget-new-products { margin:7px 0; }
+.widget-new-products .products-grid .product-image,
+.widget-new-products .products-list .product-image { width:85px; height:85px; }
+.widget-new-products .products-list .product-shop { margin-left:100px; }
+
+/* Widget: Recently Viewed Proructs */
+.widget-viewed { display:block; }
+.col-main .widget-viewed { margin:7px 0; }
+.widget-viewed .products-grid .product-image,
+.widget-viewed .products-list .product-image { width:85px; height:85px; }
+.widget-viewed .products-list .product-shop { margin-left:100px; }
+
+/* Widget: Recently Compared Proructs */
+.widget-compared { display:block;}
+.col-main .widget-compared { margin:7px 0; }
+.widget-compared .products-grid .product-image,
+.widget-compared .products-list .product-image { width:85px; height:85px; }
+.widget-compared .products-list .product-shop { margin-left:100px; }
+
+/* Widget: CMS Static Block */
+.widget-static-block {}
+.sidebar .widget-static-block { display:block; margin:0 0 15px; }
+
+/* Widgets: Links Common Styles */
+.top-container .widget a { padding:0 0 0 7px; }
+
+.bottom-container .widget a { padding:0 3px; }
+
+/* Widget: Catalog Product Link */
+.widget-product-link-inline { display:inline; }
+
+.col-main .widget-product-link { display:block; font-size:12px; text-align:right; margin:7px 0; }
+.col-main .widget-product-link a { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/widgets/i_widget-link.gif) 100% 3px no-repeat; padding-right:15px; }
+
+.sidebar .widget-product-link { display:block; margin:0 0 15px; padding:0 10px; }
+.sidebar .widget-product-link a { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/widgets/i_widget-link.gif) 100% 3px no-repeat; padding:0 15px 0 0; }
+
+/* Widget: Catalog Category Link */
+.widget-category-link-inline { display:inline; }
+
+.col-main .widget-category-link { display:block; font-size:12px; text-align:right; margin:7px 0; }
+.col-main .widget-category-link a { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/widgets/i_widget-link.gif) 100% 3px no-repeat; padding-right:15px; }
+
+.sidebar .widget-category-link { display:block; margin:0 0 15px; padding:0 10px; }
+.sidebar .widget-category-link a { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/widgets/i_widget-link.gif) 100% 3px no-repeat; padding:0 15px 0 0; }
+
+/* Widget: CMS Page Link */
+.widget-cms-link-inline { display:inline; }
+
+.col-main .widget-cms-link { display:block; font-size:12px; text-align:right; margin:7px 0; }
+.col-main .widget-cms-link a { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/widgets/i_widget-link.gif) 100% 3px no-repeat; padding-right:15px; }
+
+.sidebar .widget-cms-link { display:block; margin:0 0 15px; padding:0 10px; }
+.sidebar .widget-cms-link a { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/widgets/i_widget-link.gif) 100% 3px no-repeat; padding:0 15px 0 0; }
+/* ======================================================================================= */
+
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_modern
+ * @copyright   Copyright (c) 2009 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/* Reset ================================================================================= */
+* { margin:0; padding:0; }
+
+body          { background:#fff ; font:normal 13px/1.55 'Museo-500'; color:#808080; text-align:left; margin:0; padding:0;  }
+
+img           { border:0; vertical-align:top; }
+
+a             { color:#9dcd2a; text-decoration:none; }
+a:hover       { /*text-decoration:underline; */ color:#dd5271;}
+:focus        { outline:0; }
+
+/* Headings */
+h1          { font-size:2em; font-weight:normal; line-height:1.15; }
+h2          { font-size:1.5em; /*line-height:1.25; margin-bottom:.45em;*/ }
+h3          { font-size:1.35em; /*line-height:1.25; margin-bottom:.45em;*/ }
+h4          { font-size:1.05em; /*line-height:1.35; margin-bottom:.45em;*/ }
+h5          { font-size:1.05em; /*line-height:1.35; margin-bottom:.45em;*/ }
+h6          { font-size:1em; /*line-height:1.35; margin-bottom:1em;*/ }
+
+/* Forms */
+form          { display:inline; }
+fieldset      { border:0; }
+legend        { display:none; }
+
+/* Table */
+table         { border:0; /*border-collapse:collapse;*/ border-spacing:0; empty-cells:show; font-size:100%; }
+caption,th,td { vertical-align:top; text-align:left; font-weight:normal; }
+
+/* Content */
+p             { margin:0 0 1em; }
+strong        { font-weight:bold; }
+address       { font-style:normal; line-height:1.35; }
+cite          { font-style:normal; }
+q,
+blockquote    { quotes:none; }
+q:before,
+q:after       { content:''; }
+small         { font-size:1em; }
+big           { font-size:1.15em; }
+/*sup           { font-size:1em; vertical-align:top; }*/
+
+/* Lists */
+ul,ol         { list-style:none; }
+
+/* Tools */
+.hidden       { display:block !important; border:0 !important; margin:0 !important; padding:0 !important; font-size:0 !important; line-height:0 !important; width:0 !important; height:0 !important; overflow:hidden !important; }
+.nobr         { white-space:nowrap !important; }
+.wrap         { white-space:normal !important; }
+.a-left       { text-align:left !important; }
+.a-center     { text-align:center !important; }
+.a-right      { text-align:right !important; }
+.v-top        { vertical-align:top; }
+.v-middle     { vertical-align:middle; }
+.f-left,
+.left         { float:left !important; }
+.f-right,
+.right        { float:right !important; }
+.f-none       { float:none !important; }
+.f-fix        { float:left; width:100%; }
+.no-display   { display:none; }
+.no-margin    { margin:0 !important; }
+.no-padding   { padding:0 !important; }
+.no-bg        { background:none !important; }
+/* ======================================================================================= */
+
+
+/* Layout ================================================================================ */
+.page { width:980px;margin:0px auto; text-align:left; /*margin-bottom:20px;*/}
+.page-print { background:#fff; padding:25px 30px; text-align:left; }
+.page-empty { background:#fff; padding:20px; text-align:left; }
+.page-popup { background:#fff; padding:25px 30px; text-align:left; }
+.main-container { margin:10px 0 0 0;}
+.main {border-top:0;padding-bottom:30px;   min-height:350px; }
+
+/* Base Columns */
+.col-left { float:left; width:200px; padding:0 0 1px; }
+.col-main { float:left; width:740px; padding:0 0 1px; }
+.col-right { float:right; width:200px; padding:0 0 1px;}
+
+/* 1 Column Layout */
+.col1-layout .main { /*padding:16px 10px 40px;*/ }
+.col1-layout .col-main { float:none; width:980px; }
+
+/* 2 Columns Layout */
+.col2-left-layout .col-main { float:right; }
+.col2-right-layout .col-main {}
+
+/* 3 Columns Layout */
+.col3-layout .col-main { width:520px; margin-left:20px; }
+.col3-layout .col-wrapper { float:left; width:689px; }
+.col3-layout .col-wrapper .col-main { float:right; }
+
+/* Content Columns */
+.col2-set .col-1 { float:left; width:48.5%; }
+.col2-set .col-2 { float:right; width:48.5%; }
+.col2-set .col-narrow { width:32%; }
+.col2-set .col-wide { width:65%; }
+
+.col3-set .col-1 { float:left; width:32%; }
+.col3-set .col-2 { float:left; width:32%; margin-left:2%; }
+.col3-set .col-3 { float:right; width:32%; }
+
+.col4-set .col-1 { float:left; width:23.5%; }
+.col4-set .col-2 { float:left; width:23.5%; margin:0 2%; }
+.col4-set .col-3 { float:left; width:23.5%; }
+.col4-set .col-4 { float:right; width:23.5%; }
+/* ======================================================================================= */
+
+
+/* Global Styles ========================================================================= */
+/* Form Elements */
+input,select,textarea,button { font:italic 13px/15px Arial, Helvetica, sans-serif; vertical-align:middle; color:#808080; }
+input.input-text,select,textarea { background:#fff; border:1px solid #EFEFEF; }
+input.input-text,textarea { padding:2px; }
+select { padding:1px; }
+select option { padding-right:10px; }
+select.multiselect option { border-bottom:1px solid #b6b6b6; padding:1px 5px; }
+select.multiselect option:last-child { border-bottom:0; }
+textarea { overflow:auto; }
+input.radio { margin-right:3px; }
+input.checkbox { margin-right:3px; }
+input.qty { width:2.5em !important; }
+button.button::-moz-focus-inner { padding:0; border:0; } /* FF Fix */
+button.button { -webkit-border-fit:lines; } /* <- Safari & Google Chrome Fix */
+button.button { overflow:visible; width:auto; border:0; padding:0; margin:0; background:transparent; cursor:pointer; }
+button.button span, button.btn-checkout span { float:left; height:28px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_btn.png) 0 0 no-repeat; padding:0 0 0 6px;font-family:Museo-500;font-size:15px;line-height:28px; text-align:center; white-space:nowrap; color:#fff; /*text-shadow:0px 1px #ce6000 !important;*/text-transform:lowercase; /*font-weight:normal;*/ font-style:normal; }
+.mini-cart .block button.btn-update span { }
+button.button:hover span { background-position:bottom left; }
+button.button span span { background-position:100% 0; padding:0 15px 0 9px; }
+button.button:hover span span { background-position:bottom right; }
+button.disabled span { color:#bbb !important; }
+
+
+
+
+/*button.btn-cart span {}*/
+/*button.btn-checkout span { height:28px; border:0; background-image:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/btn_checkout.gif); padding:0 0 0 6px; font:bold 12px/26px Arial, Helvetica, sans-serif; color:#fff; }
+button.btn-checkout span span { padding:0 40px 0 34px; }
+button.btn-checkout.no-checkout span { background-position:0 100%;  }
+button.btn-checkout.no-checkout span span { background-position:100% 100%; }*/
+
+p.control input.checkbox,
+p.control input.radio { margin-right:6px; }
+/* Form Highlight */
+/*input.input-text:focus,select:focus,textarea:focus { background-color:#edf7fd; }*/
+/*.highlight { background:#efefef; }*/
+
+/* Form lists */
+/* Grouped fields */
+/*.form-list { width:535px; margin:0 auto; overflow:hidden; }*/
+.form-list li { margin:0 0 10px; }
+.form-list label { float:left; /*color:#555; font-weight:bold;*/ font:13px/18px 'Museo-500';  position:relative; z-index:0; margin:0 0 3px; }
+.form-list label.required {}
+.form-list label.required em { /*float:right;position:absolute; top:0; right:-7px;*/ font-style:normal; color:#eb340a;  }
+.form-list li.control label { float:none; }
+.form-list li input.input-text { width:248px; padding:5px; }
+.form-list li.control input.radio,
+.form-list li.control input.checkbox { margin-top:-1px; margin-right:4px; width:auto; }
+.form-list li.control .input-box { clear:none; display:inline; width:auto; }
+/*.form-list li.fields { margin-right:-15px; }*/
+.form-list .input-box { display:block; clear:both; width:260px; }
+.form-list .field { float:left; width:275px; }
+.form-list input.input-text { width:254px; }
+.form-list textarea { width:254px; height:10em; }
+.form-list select { width:260px; padding:4px; }
+.form-list li.wide .input-box { /*width:535px;*/ }
+.form-list li.wide input.input-text { /*width:523px;*/ }
+.form-list li.wide textarea { /*width:529px;*/ }
+.form-list li.wide select { /*width:535px;*/ }
+.form-list li.additional-row { border-top:1px solid #ccc; margin-top:10px; padding-top:7px; }
+.form-list li.additional-row .btn-remove { float:right; margin:5px 0 0; }
+.form-list .input-range input.input-text { width:74px; }
+/* Customer */
+.form-list .customer-name-prefix .input-box,
+.form-list .customer-name-suffix .input-box,
+.form-list .customer-name-prefix-suffix .input-box,
+.form-list .customer-name-prefix-middlename .input-box,
+.form-list .customer-name-middlename-suffix .input-box,
+.form-list .customer-name-prefix-middlename-suffix .input-box { width:auto; }
+
+.form-list .name-prefix { width:65px; }
+.form-list .name-prefix select { width:55px; }
+.form-list .name-prefix input.input-text { width:49px; }
+
+.form-list .name-suffix { width:65px; }
+.form-list .name-suffix select { width:55px; }
+.form-list .name-suffix input.input-text { width:49px; }
+
+.form-list .name-middlename { width:70px; }
+.form-list .name-middlename input.input-text { width:49px; }
+
+.form-list .customer-name-prefix-middlename-suffix .name-firstname,
+.form-list .customer-name-prefix-middlename .name-firstname { width:140px; }
+.form-list .customer-name-prefix-middlename-suffix .name-firstname input.input-text,
+.form-list .customer-name-prefix-middlename .name-firstname input.input-text { width:124px; }
+.form-list .customer-name-prefix-middlename-suffix .name-lastname { width:205px; }
+.form-list .customer-name-prefix-middlename-suffix .name-lastname input.input-text { width:189px; }
+
+.form-list .customer-name-prefix-suffix .name-firstname { width:210px; }
+.form-list .customer-name-prefix-suffix .name-lastname { width:205px; }
+.form-list .customer-name-prefix-suffix .name-firstname input.input-text,
+.form-list .customer-name-prefix-suffix .name-lastname input.input-text { width:189px; }
+
+.form-list .customer-name-prefix-suffix .name-firstname { width:210px; }
+.form-list .customer-name-prefix-suffix .name-lastname { width:205px; }
+.form-list .customer-name-prefix-suffix .name-firstname input.input-text,
+.form-list .customer-name-prefix-suffix .name-lastname input.input-text { width:189px; }
+
+.form-list .customer-name-prefix .name-firstname,
+.form-list .customer-name-middlename .name-firstname { width:210px; }
+
+.form-list .customer-name-suffix .name-lastname,
+.form-list .customer-name-middlename .name-firstname,
+.form-list .customer-name-middlename-suffix .name-firstname,
+.form-list .customer-name-middlename-suffix .name-lastname { width:205px; }
+
+.form-list .customer-name-prefix .name-firstname input.input-text,
+.form-list .customer-name-suffix .name-lastname input.input-text,
+.form-list .customer-name-middlename .name-firstname input.input-text,
+.form-list .customer-name-middlename-suffix .name-firstname input.input-text,
+.form-list .customer-name-middlename-suffix .name-lastname input.input-text { width:189px; }
+
+.form-list .customer-dob .dob-month,
+.form-list .customer-dob .dob-day,
+.form-list .customer-dob .dob-year { float:left; width:85px; }
+.form-list .customer-dob input.input-text { display:block; width:74px; }
+.form-list .customer-dob label { font-size:10px; font-weight:normal; color:#888; }
+.form-list .customer-dob .dob-day,
+.form-list .customer-dob .dob-month { width:60px; }
+.form-list .customer-dob .dob-day input.input-text,
+.form-list .customer-dob .dob-month input.input-text { width:46px; }
+.form-list .customer-dob .dob-year { width:140px; }
+.form-list .customer-dob .dob-year input.input-text { width:134px; }
+
+.buttons-set { clear:both; margin:4em 0 0; padding:0 0 0 0; border-top:1px solid #efefef; text-align:right; }
+.buttons-set p.required { margin:0 0 10px; }
+.buttons-set .back-link { float:left; margin:0; }
+.buttons-set .back-link a { color:#9dcd2a }
+.buttons-set .back-link a:hover { color:#dd5271; }
+.buttons-set button.button { float:right; margin-left:5px; }
+
+.buttons-set-order { margin:10px 0 0; }
+.buttons-set-order .please-wait { padding:5px 7px 0 0; }
+
+.fieldset { margin:0 0 35px; }
+.fieldset .legend { /*margin:0 -10px 12px; background:#f1f1f1; padding:2px 10px;*/ font:normal 15px 'Museo-500'; color:#9188ba; line-height:1.25; margin:0 0 15px; }
+
+/* Form Validation */
+.validation-advice { clear:both; min-height:13px; margin:3px 0 0; padding-left:13px; font-size:11px; line-height:13px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/validation_advice_bg.gif) 2px  top no-repeat; color:#eb340a; }
+.validation-failed { border:1px solid #eb340a !important; background:#faebe7 !important; }
+.validation-passed {}
+p.required { font-size:11px; text-align:right; color:#EB340A; }
+/* Expiration date and CVV number validation fix */
+.v-fix { float:left; }
+.v-fix .validation-advice { display:block; width:12em; margin-right:-12em; position:relative; }
+
+/* Global Messages  */
+.success { color:#3d6611; font-weight:bold; }
+.error { color:#df280a; font-weight:bold; }
+.notice { color:#e26703; }
+
+.messages,
+.messages ul { list-style:none !important; margin:0 !important; padding:0 !important; }
+.messages { width:100%; overflow:hidden; }
+.messages li { margin:0 0 10px !important; }
+.messages li li { margin:0 !important; }
+.error-msg,
+.success-msg,
+.note-msg,
+.notice-msg { border-style:solid !important; border-width:1px !important; padding:4px 12px !important; font-size:12px !important; /*font-weight:bold !important;*/ }
+.error-msg { border-color:#f16048; background-color:#faebe7; color:#df280a; }
+.success-msg { border-color:#9DCD2A; background-color:#eff5ea; color:#3d6611; }
+.note-msg,
+.notice-msg { border-color:#fcd344; background-color:#fafaec; color:#3d6611; }
+
+/* BreadCrumbs */
+.breadcrumbs a { color:#7f7f7f; }
+.breadcrumbs li { display:inline; }
+.breadcrumbs li strong { font-weight:bold; }
+
+/* Page Heading */
+.page-title { width:100%; /*overflow:hidden;*/ margin:0 0 16px; }
+.page-title h1,
+.page-title h2 { font:bold 30px 'AngelinaRegular'; color:#dd5271; }
+.page-title .separator { margin:0 3px; }
+.page-title .link-rss { float:right; margin:7px 0 0; }
+.title-buttons { text-align:right; }
+.title-buttons h1,
+.title-buttons h2,
+.title-buttons h3,
+.title-buttons h4,
+.title-buttons h5,
+.title-buttons h6 { float:left; }
+
+.subtitle { clear:both; padding:12px 0 0; font-size:16px; font-weight:bold; margin:0 0 6px; }
+
+/* Pager */
+.pager { font-size:12px; /*background:#fff url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_toolbar.gif) 0 100% repeat-x;*/ padding:10px 0 0; border-top:1px solid #efefef; /*text-align:center;*/ margin:15px 0;/*display:none;*/ }
+.pager .amount { float:right; margin:0 10px 0 0; font:13px/22px 'Museo-700'; color:#3b3f45; }
+.pager .amount strong { font-weight:normal; }
+.pager .limiter { float:right;display:none; }
+.pager .limiter label { vertical-align:middle; }
+.pager .limiter select { padding:0; margin:0 0 1px; vertical-align:middle; }
+.pager .pages { /*margin:0 140px;*/ text-align:right; float:right; font:13px/22px 'Museo-700'; color:#3b3f45; }
+.pager .pages strong { font-weight:normal; }
+.pager .pages ol { display:inline; }
+.pager .pages li { display:inline; margin:0 2px; }
+.pager .pages li a { background:#e0e0e0; color:#fff; /*padding:2px 5px;*/ -webkit-border-radius:20px; -moz-border-radius:20px; border-radius:20px; height:22px; width:22px; display:inline-block; text-align:center; }
+.pager .pages li a:hover { background:#9dcd2a; }
+.pager .pages li a.next_jump { background:none; padding:0; color:#e0e0e0; width:auto; height:auto; }
+.pager .pages .current { background:#9dcd2a; color:#fff; /*padding:2px 5px;*/ -webkit-border-radius:20px; -moz-border-radius:20px; border-radius:20px; height:22px; width:22px; display:inline-block; text-align:center; }
+
+/* Sorter */
+.sorter { font-size:11px; background:#fff url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_toolbar.gif) 0 100% repeat-x; padding:3px 8px; border-top:1px solid #ddd;/*display:none;*/ }
+.sorter .view-mode { float:left; margin:0; }
+.sorter .sort-by { float:right; padding-right:36px; }
+.sorter .sort-by label { vertical-align:middle; }
+.sorter .sort-by select { padding:0; margin:0 0 1px; vertical-align:middle; }
+.sorter .link-feed {}
+
+/* Toolbar */
+.toolbar {}
+.toolbar .pager { padding:3px 8px; }
+.toolbar .sorter {}
+.toolbar-bottom {}
+
+/* Data Table */
+.data-table { width:100%; }
+/*.data-table tr.odd  { background:#fff }
+.data-table tr.even { background:#fcfcfc; }*/
+.data-table thead tr{ background-image:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/thead-bg.jpg); height:46px; }
+.data-table tr.last th{ border-bottom:0 !important; }
+.data-table th, .my-wishlist .data-table th { padding:6px 0; font:normal 15px 'Museo-500'; color:#fff; text-transform:capitalize; white-space:nowrap; }
+.data-table th.wrap { white-space:normal; }
+.data-table th a { color:#fff; }
+.data-table td { padding:6px 20px; vertical-align:middle; }
+
+.data-table thead{ background:#9188ba; }
+.data-table thead tr th span { padding:3px 20px; border-right:1px solid #a097c8; display:block; }
+.data-table thead tr th.last span { border-right:0; }
+
+.data-table tfoot { border-bottom:1px solid #d9dde3; }
+/*.data-table tfoot tr { background-color:#f3f3f3 !important; }*/
+.data-table tbody tr td a.link-cart { background:#dd5271; height:28px; line-height:28px; font-family:'Museo-500'; font-weight:normal; display:inline-block; padding:0 15px; color:#fff; -webkit-border-radius:5px;-moz-border-radius:5px; border-radius:5px; text-transform:lowercase; }
+.data-table tbody tr td a.link-cart:hover { background:#ee6886; }
+.data-table tbody tr td input { border:1px solid #A097C8; padding:4px; width:50px; }
+.data-table tbody tr td p.brand-name { margin:0; }
+.data-table tbody tr td p.brand-name a{ font:18px/22px 'Museo-500'; color:#2b3a65; margin:0; }
+.data-table tbody tr td h2.product-name { font:14px/20px 'Museo-700'; color:#9b93c0; margin:0 0 10px; }
+.data-table tbody tr td h2.product-name a { color:#9b93c0; }
+.data-table tbody tr td p.sub-desc { font:normal 14px/20px 'Museo-500'; color:#626262; margin:0; }
+.data-table tbody tr td .cart-price span{ font:20px/24px 'Museo-500'; color:#dd5271;}
+.data-table tbody tr td .cart-price span.old-price .price { color:#d4d4d4; }
+.data-table tbody td.last {  }
+.data-table tbody td a.product-image { display:inline-block; border:1px solid #efefef; margin:10px 0; }
+.data-table tbody th { padding:3px 8px; font-size:11px; font-weight:bold; text-transform:none; white-space:normal; }
+.data-table tbody th, .data-table tbody td { /*border-top:1px solid #efefef;*/ border-right:1px solid #efefef; border-bottom:1px solid #efefef; }
+.data-table tfoot strong { font-size:14px; }
+.data-table tbody td.first { border-left:1px solid #efefef; }
+.data-table tbody tr.first td{ border-top:1px solid #efefef; }
+/* Bundle products tables */
+.data-table tbody.odd tr { background:#fff; }
+.data-table tbody.even tr { background:#fcfcfc; }
+.data-table tbody.odd tr td,
+.data-table tbody.even tr td { border-bottom:0; }
+.data-table tbody.odd tr.border td,
+.data-table tbody.even tr.border td { border-bottom:1px solid #d9dde3; }
+
+.data-table tbody td .option-label { font-weight:bold; font-style:italic; }
+.data-table tbody td .option-value { padding-left:10px; }
+
+/* Tax Details Row */
+tr.tax-total { cursor:pointer; }
+tr.tax-total td {}
+tr.tax-total .tax-collapse { float:right; text-align:right; padding-left:20px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_collapse.gif) 0 4px no-repeat; cursor:pointer; }
+tr.show-details .tax-collapse { background-position:0 -53px; }
+tr.show-details td {}
+tr.tax-details td { background-color:#dae1e4; color:#626465; }
+tr.tax-details-first td { border-top:1px solid #d2d8db; }
+
+/* Shopping cart tax info */
+.cart-tax-info { display:block; }
+.cart-tax-info,
+.cart-tax-info .cart-price { padding-right:20px; }
+.cart-tax-total { display:block; padding-right:20px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_collapse.gif) 100% 4px no-repeat; cursor:pointer; }
+.cart-tax-info .price,
+.cart-tax-total .price { display:inline !important; font-weight:normal !important; }
+.cart-tax-total-expanded { background-position:100% -53px; }
+
+/* Class:std - styles for admin-controlled content */
+.std .subtitle { padding:0; }
+.std ol.ol { list-style:decimal outside; padding-left:1.5em; }
+.std ul.disc { margin:0 0 10px; }
+.std ul.disc { list-style:disc outside; padding-left:18px; }
+.std dl dt { font-weight:bold; }
+.std dl dd { margin:0 0 10px; }
+/*.std ul,
+.std ol,
+.std dl,
+.std p,
+.std address,
+.std blockquote { margin:0 0 1em; padding:0; }
+.std ul { list-style:disc outside; padding-left:1.5em; }
+.std ol { list-style:decimal outside; padding-left:1.5em; }
+.std ul ul { list-style-type:circle; }
+.std ul ul,
+.std ol ol,
+.std ul ol,
+.std ol ul { margin:.5em 0; }
+.std dt { font-weight:bold; }
+.std dd { padding:0 0 0 1.5em; }
+.std blockquote { font-style:italic; padding:0 0 0 1.5em; }
+.std address { font-style:normal; }
+.std b,
+.std strong { font-weight:bold; }
+.std i,
+.std em { font-style:italic; }*/
+
+/* Misc */
+.links li { display:inline; }
+.links li.first { padding-left:0 !important; }
+/*.links li.last { background:none !important; padding-right:0 !important; }*/
+
+.link-cart { font-weight:bold; color:#d62502; }
+.link-wishlist { color:#444; }
+.link-reorder {}
+.link-compare {}
+.link-print { /*background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/i_print.gif) 0 2px no-repeat; padding:3px 0 3px 25px;*/ }
+.link-rss { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/i_rss.gif) 0 1px no-repeat; padding-left:18px; line-height:14px; white-space:nowrap; }
+.btn-remove { display:block; width:12px; height:12px; font-size:0; line-height:0; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/btn-remove.jpg) 0 0 no-repeat; text-indent:-999em; overflow:hidden; }
+.btn-remove:hover{ background-position:left bottom; }
+.btn-remove2 { display:block; width:16px; height:16px; font-size:0; line-height:0; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/btn_trash.gif) 0 0 no-repeat; text-indent:-999em; overflow:hidden; }
+
+.separator { margin:0 10px; }
+
+.divider { clear:both; display:block; font-size:0; line-height:0; height:1px; background:#ccc; margin:10px 0; text-indent:-999em; overflow:hidden; }
+
+/* Noscript Notice */
+.noscript { border:1px solid #ddd; border-width:0 0 1px; background:#ffff90; font-size:12px; line-height:1.25; text-align:center; color:#2f2f2f; }
+.noscript .noscript-inner { width:950px; margin:0 auto; padding:12px 0 12px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/i_notice.gif) 20px 50% no-repeat; }
+.noscript p { margin:0; }
+
+/* Demo Notice */
+.demo-notice { margin:0; padding:6px 10px; background:#d75f07; font-size:11px; line-height:1.15; text-align:center; color:#fff; }
+/* ======================================================================================= */
+
+
+/* Header ================================================================================ */
+.logo { float:left; }
+.header-container {}
+
+.header { margin:0px; padding:0px; position:relative; }
+.header .logo { float:left; text-decoration:none !important; }
+.header .logo strong { position:absolute; top:-999em; left:-999em; width:0; height:0; font-size:0; line-height:0; text-indent:-999em; overflow:hidden; }
+
+.header .top-promo { float:left; width:117px; height:30px; margin:12px 10px 0; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_top-promo.gif) 0 0 no-repeat; text-indent:-999em; overflow:hidden; }
+
+
+.access { clear:right; float:right;position:relative; top:19px; /*width:350px;*/ }
+.access .links{  position:relative; }
+.access ul { float:right; }
+.access .links li { margin-right:5px; float:left; font-family:Museo-500;font-size:14px;padding:0px 11px 0px 5px;border-right:1px solid #ccc; line-height:20px; }
+.access .links .head-cart li { border:0; margin:0; padding:0;}
+/*.access .links li.last {margin-right:0px !important;border:0px !important;}*/
+.access .links li a { color:#2b3a65; text-transform:lowercase;}
+.access .links li a:hover { color:#9DCD2A; text-decoration:none; }
+.access .links li.first { padding-left:5px !important; }
+/*.access .links li.last { background:none !important; padding-right:0 !important; margin-right:0px;}
+.access .links li.last a {background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/icons/login_ico.png) no-repeat left center;	 }
+.access .links li.first a { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/icons/account_ico.png) no-repeat left center;	}
+.top-link-wishlist { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/icons/wishlist_ico.png) no-repeat left center;	}
+.top-link-cart { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/icons/cart_ico.png) no-repeat left center;	}
+.top-link-checkout { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/icons/checkout_ico.png) no-repeat left center;	} */
+.top-link-cart span { background:#9dcd2a; font:bold 12px/18px Arial, Helvetica, sans-serif; padding:0 6px; display:inline-block; color:#fff; text-align:center; -webkit-border-radius:10px;
+-moz-border-radius:10px; border-radius:10px; }
+.top-link-cart span span { display:none; }
+
+.quick-access { background:#444; color:#fff; padding:7px 13px; text-align:right; }
+.quick-access .welcome-msg { display:inline; margin:0; color:#fff; }
+.quick-access .form-language { float:left; }
+.quick-access .form-language label { font-weight:bold; padding-right:5px; color:#fff; vertical-align:middle; }
+.quick-access .form-language select { padding:0; }
+.quick-access .form-language select.flags option { background-position:4px 50%; background-repeat:no-repeat; padding-left:25px; }
+.quick-access .links { padding-left:8px; }
+.quick-access .links,
+.quick-access .links li { display:inline; }
+.quick-access .links li { padding:0 4px 0 1px; }
+.quick-access .nlinks a { color:#ddd; }
+.quick-access .links a { padding:0 7px 0 0; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_pipe1.gif) no-repeat 100% 50%; }
+.quick-access .links li.last a { padding:0; background:none; }
+
+.cms-links { position:relative; float:right; top:0; }
+.cms-links ul, .cms-links ul li { display:inline; float:left; }
+.cms-links li { padding-right:10px; margin-right:10px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/background/divider_top.gif) no-repeat right center; }
+.cms-links li.last { margin-right:0px;padding-right:0px; background:none;}
+.cms-links li.welcome { color:#f88613;font-weight:bold; }
+.cms-links li a { color:#999999; }
+.cms-links li a:hover { color:#000; text-decoration:none; }
+
+.top-bar { padding:3px 12px 2px 0px; line-height:21px;margin-top:-10px;margin-bottom:10px; border-bottom:4px solid #ddd;display:none; }
+.top-bar .breadcrumbs { float:left; width:580px; }
+.form-search { float:right; padding-top:5px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/background/search_bg.png) no-repeat; width:169px; height:28px; position:relative; top:7px; right:7px; }
+.form-search label { display:none;float:left; font-size:12px; font-weight:bold; padding:0 5px 0 0; }
+.form-search .search_btn { float:right;/*padding-right:5px;*/ padding:2px 2px 0 0;}
+.form-search input.input-text { float:left; width:145px;/*padding-left:5px;*/border:none; background:transparent; font:11px/18px Museo-500; color:#999; padding-top:4px; }
+.form-search button.button { float:left; }
+.form-search button.button span { height:23px; background-image:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_btn-small.png); line-height:21px; }
+.form-search .search-autocomplete { z-index:999; }
+.form-search .search-autocomplete ul { border:1px solid #999; background-color:#f9f5f0; }
+.form-search .search-autocomplete li { text-align:left; border-bottom:1px solid #f4eee7; padding:2px 8px 1px 8px; cursor:pointer; }
+.form-search .search-autocomplete li .amount { float:right; font-weight:bold; }
+.form-search .search-autocomplete li.odd { background-color:#f6f6f6; }
+.form-search .search-autocomplete li.selected { background-color:#ecf9ea; }
+
+.header-container .top-container { padding:5px 12px; background:#fff; border:1px solid #bbb; border-width:0 1px 1px; text-align:right; }
+
+
+/*BABY NATURALS - EMBEDDED WEB FONTS*/
+ @font-face {font-family:'Museo-700';src:url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/23B7F7_0_0.eot');src:url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/23B7F7_0_0.eot?#iefix') format('embedded-opentype'),url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/23B7F7_0_0.woff') format('woff'),url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/23B7F7_0_0.ttf') format('truetype');}
+   
+ @font-face {font-family:'Museo-300';src:url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/23B7F7_1_0.eot');src:url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/23B7F7_1_0.eot?#iefix') format('embedded-opentype'),url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/23B7F7_1_0.woff') format('woff'),url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/23B7F7_1_0.ttf') format('truetype');}
+  
+ @font-face {font-family:'Museo-500';src:url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/23B7F7_2_0.eot');src:url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/23B7F7_2_0.eot?#iefix') format('embedded-opentype'),url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/23B7F7_2_0.woff') format('woff'),url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/23B7F7_2_0.ttf') format('truetype');}
+
+@font-face {font-family:'AngelinaRegular';src:url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/angelina-webfont.eot');src:url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/angelina-webfont.eot?#iefix') format('embedded-opentype'), url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/angelina-webfont.woff') format('woff'), url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/angelina-webfont.ttf') format('truetype'), url('http://www.babynaturals.com/skin/frontend/default/babynaturals/webfonts/angelina-webfont.svg#AngelinaRegular') format('svg');font-weight:normal;font-style:normal;
+}
+
+/*BABY NATURALS - OTHER FONT STYLES*/
+.pink-text {color:#dd5271;}
+.green-text {color:#9dcd2a;}
+
+
+
+/* BABY NATURALS - NAVIGATION */
+
+.nav-container {width:980px;height:40px;margin:0 auto;display:block;}
+.nav-container > ul {margin-top:11px;display:inline-block;}
+.nav-container ul > li{font-family:Museo-700;font-size:14px;padding-right:22px;/*display:inline;*/ position:relative; float:left;}
+.nav-container ul > li.last{padding-right:0px !important;}
+.nav-container ul > li a {color:#2B3A65;text-transform:uppercase;text-decoration:none;}
+.nav-container ul > li a:hover, .nav-container ul li.active > a{ color:#9dcd2a;}
+.nav-container ul li a.pink-link {color:#dd5271;}
+.nav-container ul li a.pink-link:hover, .nav-container ul li.active a.pink-link {color:#9DCD2A;}
+
+/* 1st Level */
+#nav ul li,
+#nav ul li.active,
+#nav ul li.over { float:none;  background:none; margin:0; padding:0; /*padding-bottom:1px;*/ text-transform:none; }
+#nav ul li.parent > a { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/dropdown-arrow.png) no-repeat 96% 50%; }
+#nav ul li.last { padding-bottom:0; }
+#nav ul li.active { margin:0;  background:none; }
+#nav ul a,
+#nav ul a:hover { /*float:none; padding:0; background:none;*/ }
+#nav ul li a { font-weight:normal !important; }
+#nav ul li { border-top:1px dotted #9dcd2a; }
+#nav ul li.first { border:none; }
+
+/* 2nd Level */
+#nav ul,
+#nav div { position:absolute; width:250px; top:22px; left:-10000px; border:1px solid #9dcd2a; /*border-bottom:2px solid #999;*/ padding:0; background:#fff; /*font-size:11px;*/ -webkit-box-shadow:#f5f5f5 0px 0px 5px; -moz-box-shadow:#f5f5f5 0px 0px 5px; box-shadow:#f5f5f5 0px 0px 5px; }
+#nav div ul { position:static; width:auto; border:none; padding:0; }
+
+/* 3rd+ Level */
+#nav ul ul,
+#nav ul div { top:-1px; }
+
+#nav ul li a { padding:10px; font:13px/18px Museo-500; display:block; text-transform:capitalize; }
+#nav ul li a:hover {/* padding:3px 0;*/ }
+#nav ul li.active > a { color:#9dcd2a; }
+
+/* Show menu */
+#nav li ul.shown-sub,
+#nav li div.shown-sub { left:0px; z-index:999; }
+#nav li .shown-sub ul.shown-sub,
+#nav li .shown-sub li div.shown-sub { left:250px; }
+
+
+/* BABY NATURALS - HOME CONTENT*/
+
+/*TOP CAROUSEL*/
+#home-carousel {width:980px;height:464px;margin:0 auto;overflow:hidden;position:relative;display:none;}
+#home-carousel .slides_container {width:980px;height:464px;}  
+#home-carousel .slides_container div {display:block;}
+
+
+/*HOME CONTENT - PRODUCTS*/
+#home-content-products {/*margin-top:10px;*/}
+#home-content-products h2 {font-family:'AngelinaRegular';font-size:32px; /*line-height:38px;*/color:#2b3a65;font-weight:bold;}
+#home-content-products-heading-arrow {position:relative;left:20px;bottom:4px;width:18px;height:30px;z-index:6;}
+#home-content-product-container {position:relative;bottom:20px;}
+.home-content-product-item {position:relative;float:left;margin-right:8px;}
+.slides_container .catslider { z-index:auto !important; }
+.slides_container .catslider.products-grid li.item.hover { z-index:10; }
+.slides_container .catslider .quicksee-container { z-index:10; }
+
+
+/*PRODUCT CAROUSEL*/
+#home-content-product-container {width:980px;height:298px;/*background:#FFF;overflow:hidden;*/position:relative;text-align:center;}
+#home-content-product-container .slides_container {height:298px;width:980px;margin:0px auto;position:relative;}
+#home-content-product-container .catslider {margin:0px auto;height:293px;width:980px;}
+#home-content-product-container .prev {width:37px;height:37px;background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/prev_off.png) no-repeat left top;position:absolute;z-index:6;/*float:left;*/ left:-18px;top:117px;}
+#home-content-product-container .next {width:37px;height:37px;background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/next_off.png) no-repeat left top;position:absolute;z-index:6;/*float:right;*/ right:-18px; top:117px;}
+#home-content-product-container a.prev:hover {background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/prev_off.png) no-repeat left bottom;}
+#home-content-product-container a.next:hover {background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/next_off.png) no-repeat left bottom;}
+.categoryIcon {width:188px;height:293px;display:inline-block;	margin:0px 2px;}
+.categoryIcon img {	display:block;	}
+#home-content-product-container ul li { background:#fff; width:166px; margin:0 10px 0 0; height:auto; }
+#home-content-product-container ul li.last { margin:0; }
+
+
+/*HOME CONTENT - CONTENT BLOCKS*/
+#home-content-block-container {/*background-color:#999;*/clear:left;margin-top:20px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/block-divider.png) repeat-y left top;}
+#home-content-block-container:after {  display:block; content:"."; clear:both; font-size:0; line-height:0; height:0; overflow:hidden;}
+.home-content-block {position:relative;float:left;width:300px; margin:0 20px 0 0; padding:0 20px 0 0;}
+.home-content-block h3 {font-family:'AngelinaRegular';font-size:30px;color:#2b3a65;font-weight:bold;}
+.home-content-block p {/*padding:0px 30px 0px 0px;*/font-family:Museo-500;font-size:11px;color:#4f4f4f;line-height:18px;}
+#home-signup-block {display:inline-block; margin:0; padding:0;}
+.home-signup-link img{position:relative;bottom:8px;}
+.home-signup-link a{font-family:Museo-500;font-size:11px;color:#4c4c4c;text-decoration:none;}
+.home-signup-link a:hover {color:#2b3a65; font-family:Museo-700;}
+.home-signup-icon {border:0;height:24px;width:24px;}
+
+
+
+/*************** LEFT NAVIGATION **************** /
+
+#leftnav { font-size:1em;margin-bottom:1em; }
+
+/************** ALL LEVELS  *************/ /* Style consistent throughout all nav levels */
+#leftnav li { position:relative; text-transform:normal; text-align:left; }
+#leftnav li.over { z-index:999; }
+#leftnav a, #leftnav a:hover { display:block; white-space:nowrap; text-decoration:none; }
+#leftnav span { display:block; cursor:pointer; white-space:nowrap; }
+#leftnav li ul span { white-space:normal; }
+/************ 0 LEVEL  ***************/
+#leftnav li { border-bottom:1px solid #ddd; }
+#leftnav li.active, #leftnav li.active a { }
+#leftnav li a{ padding:8px 5px 7px 10px; color:#797979; text-shadow:0px 1px #fff; }
+#leftnav li.active { background-color:#e9e9e9;}
+#leftnav li.over a, #leftnav a:hover { color:#2e2e2e; }
+#leftnav li.parent a { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/background/leftnav_arrow.gif) 95% center no-repeat;}
+#leftnav li:hover, #leftnav li.over { background:#f2f1e9; }
+/************ 1ST LEVEL ************/
+#leftnav ul li span { line-height:1.3em; }
+#leftnav ul li, #leftnav ul li.active, #leftnav ul li.over { float:none; border:none; padding:0; padding-bottom:1px; border-bottom:1px solid #C5C5C5; text-transform:none; }
+#leftnav ul li.parent { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/background/leftnav_arrow.gif) 95% center no-repeat;}
+#leftnav ul li.parent a { background-image:none !important; }
+#leftnav ul li.last { padding-bottom:0; }
+#leftnav ul li.active { margin:0; border:0; background:none; }
+#leftnav ul a, #leftnav ul a:hover { float:none; padding:0; background:none; }
+#leftnav ul li a { font-weight:normal !important; }
+#leftnav ul li a:hover { background-color:#f2f1e9 !important; }
+/************ 2ND LEVEL ************/
+#leftnav ul { position:absolute; width:18em; top:5px; left:-10000px; padding:0; background:#f6f6f6; border:1px solid #C5C5C5; }
+/* Show menu */
+#leftnav li.over > ul { left:150px; }
+#leftnav li.over > ul li.over > ul { left:100px; }
+#leftnav li.over ul ul { left:-10000px; }
+#leftnav ul li { background:#f6f6f6; }
+#leftnav li.parent ul li a{ background:none !important; }
+#leftnav ul li:hover { background:none; border-bottom:1px solid #C5C5C5; }
+#leftnav ul li a { padding:7px 7px; }
+#leftnav ul li a:hover { padding:7px; background:#f2f1e9 !important; }
+/************ 3RD+ LEVEL ************/
+#leftnav ul ul { top:5px; }
+/* End Left Navigation */
+#nav-top { font-size:1em; width:960px; }
+#nav-top ul { list-style:none; padding:0px; margin-left:3em; }
+#nav-top li { float:left; padding:0px; margin-right:5px; }
+#nav-top li a { display:block; background:#dddabb; color:#666134; padding:6px 7px; }
+#nav-top li a:hover { background:#899065 url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/nav_top_ahover_blue.gif) top right no-repeat; ; color:#fff; text-decoration:none; }
+
+/********** Navigation > */
+/* ======================================================================================= */
+
+/* BABY NATURALS - WRAPPERS */
+
+.home-wrapper {background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/background/home-wrapper-bg.jpg) repeat-x left top; overflow:hidden;}
+.wrapper {background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/background/main-wrapper-bg.jpg) repeat-x left top;}
+
+
+
+
+/*********** Connect ************/
+
+.connect		{float:right; position:relative; top:10px;right:10px;}
+.connect img	{margin-right:2px; opacity:0.8; }
+.connect img:hover {opacity:1;}
+
+
+/* Sidebar =============================================================================== */
+.block { /*background:#fff url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/background/block_bg_repeat.gif) repeat-y top left;*/  margin:0 0 15px; line-height:1.35;padding-right:0px;}
+.block .block-title {  /*background:#1f1f1f url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/background/block_title_alt.gif) no-repeat; */padding:10px 8px 8px 10px; margin-right:0px;}
+.block .block-title strong {/* display:block; font:bold 12px/1.5 Arial, Helvetica, sans-serif; text-transform:uppercase; color:#fff;text-shadow:0px -1px #000; */}
+.block .block-title strong span {}
+.block .block-title a { text-decoration:none !important; }
+.block .block-subtitle { font-size:10px; margin:0 0 10px; padding:0 0 2px; border-bottom:1px solid #ddd; text-transform:uppercase; }
+.block .block-content { padding:12px 15px 15px 15px;/* background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/background/block_bg_bottom.gif) no-repeat bottom left; */ font-size:12px;}
+.block .block-content li.item { border-bottom:1px solid #ddd; padding-bottom:5px; margin-bottom:5px; }
+.block .block-content li.item.last { border-bottom:0; padding-bottom:0; margin-bottom:0; }
+.block .btn-remove { float:right; margin:4px 0 2px 5px; }
+.block .actions { border-top:1px solid #ddd; padding:5px 0 0; margin:5px 0 0; text-align:right; }
+.block .actions a { float:left; }
+.block .actions button.button { float:right; }
+.block .empty { margin:0; }
+.block .price-box { margin:5px 0; }
+.block button.button span { height:23px; background-image:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_btn-small.png); line-height:20px; }
+.block button.button span span { color:#444; text-shadow:0px 1px #fff !important; }
+.mini-cart .block button.btn-update span { height:28px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_btn.png) 0 0 no-repeat; padding:0 0 0 6px ;font-family:Museo-500; font-size:15px; line-height:26px; text-align:center; white-space:nowrap; color:#fff; /*text-shadow:0px 1px #ce6000 !important;*/text-transform:lowercase; /*font-weight:normal;*/ font-style:normal; }
+.mini-cart .block button.button:hover span { background-position:bottom left; }
+.mini-cart .block button.button span span { background-position:100% 0; padding:0 15px 0 9px; }
+.mini-cart .block button.button:hover span span { background-position:bottom right; }
+/*.block li.odd { background-color:#f4f3f3; }
+.block li.even { background-color:#fafafa; }*/
+
+/* Mini Products List */
+.mini-products-list .product-image { float:left; width:50px; border:1px solid #EFEFEF; }
+.mini-products-list .product-details { margin-left:60px; }
+.mini-products-list .product-details .qty { margin:2px 0; }
+
+/* Block:Account */
+.catalog-listing .product-image img {display:block;overflow:hidden;width:170px;height:170px;}
+.block-account .block-title { border:0; /*background:#666;*/ padding:0; }
+.block-account .block-title strong { /*color:#fff;*/ font:bold 24px/32px 'AngelinaRegular'; color:#dd5271; }
+.block-account .block-content { border:1px solid #efefef; padding:10px; }
+.block-account .block-content li a { display:block;/* border-bottom:1px solid #ddd;*/ font:13px/18px 'Museo-500'; padding:3px 0; color:#7A80BE; text-decoration:none !important; }
+.block-account .block-content li a:hover { color:#9DCD2A; }
+.block-account .block-content li.last a { border-bottom:0; }
+.block-account .block-content li.current { /*border-bottom:1px solid #ddd;*/ padding:3px 0; color:#9DCD2A; font:normal 13px/18px 'Museo-500'; }
+.block-account .block-content li.current strong { font-weight:normal; }
+/*.block-account .block-content li.current.last { border-bottom:0; }*/
+
+/* Block:Currency Switcher */
+.block-currency { background:#f4f4f4; }
+.block-currency .block-title { border:0; background:none; padding:7px 10px 2px; text-transform:none; }
+.block-currency .block-title strong { text-transform:none; }
+.block-currency .block-content { padding:0 10px 12px; }
+.block-currency .block-content select { width:100%; padding:0; }
+
+/* Block:Left Nav */
+.block-leftnav .block-content { padding:0px; }
+
+/* Block:Layered Navigation */
+.block-layered-nav { border:0; }
+.block-layered-nav .block-title { }
+.block-layered-nav .block-content { padding:0; }
+.block-layered-nav .block-subtitle { margin:0;  font-size:12px; font-weight:bold; padding:2px 10px; color:#333; }
+.block-layered-nav dt { font-weight:bold; border-top:1px solid #fff; padding:8px 10px 0 10px; font-size:12px; }
+.block-layered-nav dd { padding:0 10px 8px 10px; border-bottom:1px solid #ddd; }
+.block-layered-nav dd li { line-height:1.35; margin:0 0 3px; }
+.block-layered-nav dd a { color:#444; }
+.block-layered-nav .last { border-bottom:0px; }
+.block-layered-nav .currently { padding:6px 0 0; }
+.block-layered-nav .currently li { padding:2px 10px; }
+.block-layered-nav .currently .label { font-weight:bold; }
+.block-layered-nav .currently .btn-remove { margin:2px 0 0; }
+.block-layered-nav .actions { padding:5px 10px; margin:0; }
+.block-layered-nav .actions a { float:none; }
+
+/* Block:Cart */
+.block-cart .block-title span { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/icons/cart_ico.png) no-repeat left center; padding-left:20px;}
+.block-cart .block-title strong { }
+.block-cart .summary { background:#fdebcd; padding:8px; margin:-12px -13px 8px; text-align:center; position:relative; z-index:1; }
+.block-cart .amount { margin:0; }
+.block-cart .amount a { font-weight:bold; }
+.block-cart .subtotal { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_subtotal.gif) no-repeat 50% 0; margin:5px 0 0; line-height:23px; }
+.block-cart .subtotal .price { font-weight:bold; }
+.block-cart .actions { display:none !important; }
+
+/* Block:Wishlist */
+.block-wishlist .actions { text-align:right; }
+.block-wishlist .actions a { float:none; }
+
+/* Block:Related */
+.block-related .block-subtitle { font-size:11px; font-weight:bold; border:0; padding:0; margin:0 0 8px; text-transform:none; }
+.block-related input.checkbox { float:right; }
+.block-related .product { margin-right:20px; }
+
+/* Block:Compare Products */
+.page-popup .link-print { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/i_print.gif) 0 2px no-repeat; padding:3px 0 3px 25px; }
+.compare-table { border:0; }
+.compare-table thead,
+.compare-table thead tr.first { background:#fff; }
+.compare-table thead tr.first th,
+.compare-table thead tr.first td { border:0; background:none; padding:0 0 4px; font-size:0; line-height:0; }
+.compare-table .btn-remove { float:right; background-image:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/btn_remove.gif); width:12px; height:12px; }
+.compare-table tbody th { background:#e9e9e9; }
+.compare-table tbody th,
+.compare-table tbody td { padding:10px; border:0; border-top:1px solid #ccc; border-left:1px solid #ccc; }
+.compare-table tbody td.last { border-right:1px solid #ccc; }
+.compare-table tbody tr.last th,
+.compare-table tbody tr.last td { border-bottom:1px solid #ccc !important; }
+.compare-table tr.add-to-row td { background:#fffada; text-align:center; }
+.compare-table tr.first td { text-align:center; }
+.compare-table tr.first td .product-name { font-size:13px; font-weight:bold; margin:0 0 5px; color:#203548; }
+.compare-table tr.first td .product-name a { color:#203548; }
+.compare-table tr.first td .ratings { width:69px; margin:0 auto; }
+.compare-table tr.first td p,
+.compare-table tr.add-to-row td p { margin:0; }
+.compare-table .add-to-links li { background:none; padding:0; }
+
+/* Block:Recently Viewed */
+.block-viewed {}
+
+/* Block:Recently Compared */
+.block-compared {}
+
+/* Block:Poll */
+.block-poll .block-subtitle { font-size:12px; }
+.block-poll label { color:#777; font-weight:bold; }
+.block-poll input.radio { float:left; margin:1px -18px 0 0; }
+.block-poll .label { display:block; margin-left:18px; }
+.block-poll li { padding:3px 9px; }
+.block-poll .actions { margin:5px 0 0; }
+.block-poll .answer { font-weight:bold; }
+.block-poll .votes { float:right; margin-left:10px; }
+
+/* Block:Tags */
+.block-tags .block-content ul { font-size:13px; }
+.block-tags .block-content li { display:inline; padding-right:4px; }
+.block-tags .block-content li a { color:#444; }
+.block-tags .actions { text-align:right; }
+.block-tags .actions a { float:none; }
+
+/* Block:Reorder */
+.block-reorder input.checkbox { float:left; margin:2px -20px 0 0; }
+.block-reorder .product-name { margin-left:20px; }
+.block-reorder .validation-advice { margin:3px 9px 7px; }
+
+/* Block:Banner */
+.block-banner { border:0; }
+.block-banner .block-content { padding:0; background:#fff; text-align:center; }
+
+/* Block:Login */
+.block-login .block-content { padding:5px 10px; }
+.block-login label { font-weight:bold; color:#555; }
+.block-login input.input-text { display:block; width:167px; margin:3px 0; }
+.block-login .actions { background:none; padding:0; margin:3px 0 0; }
+
+/* Block Styling 
+
+.block-account .block-title, .block-layered-nav .block-title,
+.block-compare .block-title { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/background/block_title_alt.gif) no-repeat top left; }
+
+.block-account .block-title strong, .block-layered-nav .block-title strong,
+.block-compare .block-title strong { text-shadow:0px 1px #000; }*/
+/* ======================================================================================= */
+
+
+
+/* View Type:List */
+.products-list li.item { border-bottom:1px solid #d9ddd3; padding:12px 10px; }
+.products-list li.item.last { border-bottom:0; }
+.products-list .product-shop { margin-left:185px; }
+.products-list .product-image { float:left; width:170px; height:170px; margin:0 0 10px; }
+.products-list .product-name { font-size:12px; margin:0 0 6px; }
+.products-list .product-name a { color:#444; text-decoration:underline; }
+.products-list .product-name a:hover { text-decoration:none; }
+.products-list .price-box { float:left; margin:4px 13px 0 0; }
+.products-list .availability { float:left; margin:3px 0 0; }
+.products-list .desc { clear:both; padding:6px 0 0; margin:0 0 13px; line-height:1.35; }
+.products-list .desc .link-more { font-size:11px; }
+.products-list .add-to-links { clear:both; }
+/* ======================================================================================= */
+
+
+/* Product View ========================================================================== */
+/* Rating */
+.no-rating { margin:0; }
+
+.ratings { line-height:1.25; margin:7px 0; }
+.ratings strong { float:left; margin:0 3px 0 0; }
+.ratings .rating-links { margin:0; }
+.ratings .rating-links .separator { margin:0 2px; }
+.ratings dt {}
+.ratings dd {}
+.rating-box { width:50px; height:10px; font-size:0; line-height:0; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_rating.gif) 0 0 repeat-x; text-indent:-999em; overflow:hidden; }
+.rating-box .rating { float:left; height:10px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_rating.gif) 0 100% repeat-x; }
+.ratings .rating-box { float:left; margin:2px 3px 0 0; }
+.ratings .amount {}
+
+.ratings-table th,
+.ratings-table td { font-size:11px; line-height:1.15; padding:3px 0; }
+.ratings-table th { font-weight:bold; padding-right:8px; }
+.ratings-table td { padding:4px 0 0; }
+
+/* Availability */
+.availability { margin:0; }
+.availability span { /*font-weight:bold;*/ color:#9DCD2A; }
+.availability.in-stock span {}
+.availability.out-of-stock span { color:#d83820; }
+.product-view .product-shop .availability { font-size:11px; }
+.product-view .product-shop .availability span { font-weight:normal; }
+
+/* Email to a Friend */
+.email-friend { margin:0; }
+
+/* Alerts */
+.alert-price { margin:0; font-size:11px; }
+.alert-stock { margin:0; font-size:11px; }
+
+/********** < Product Prices */
+.price { white-space:nowrap !important; }
+
+.price-box { margin:5px 0 10px; }
+.price-box .price { font-size:13px; /*font-weight:bold;*/ color:#DD5271; }
+
+/* Regular price */
+.regular-price { color:#DD5271; }
+.regular-price .price { font-size:13px; /*font-weight:bold; */color:#DD5271; }
+
+/* Old price */
+.old-price { margin:0; }
+.old-price .price-label { font-size:12px; /*font-weight:bold;*/ white-space:nowrap; display:none; }
+.old-price .price { /*font-weight:bold;*/ font-size:13px; color:#CCCCCC; text-decoration:line-through; }
+
+/* Special price */
+.special-price { margin:0; }
+.special-price .price-label { font-size:11px;/* font-weight:bold;*/ text-transform:uppercase; white-space:nowrap; color:#000; display:none; }
+.special-price .price { font-size:13px; /*font-weight:bold;*/ color:#DD5271; }
+
+/* Minimal price (as low as) */
+.minimal-price { margin:0; }
+.minimal-price .price-label { font-size:12px; font-weight:bold; white-space:nowrap; }
+
+.minimal-price-link { display:block; font-size:12px; text-decoration:underline; color:#444; }
+.minimal-price-link .label {color:#444;}
+.minimal-price-link .price { font-weight:normal; color:#444; }
+
+/* Including tax */
+.price-including-tax { display:block; color:#888; }
+.price-including-tax .label {  font-size:10px; text-transform:uppercase; white-space:nowrap; color:#888; }
+.price-including-tax .price { font-size:13px; font-weight:bold; color:#396f00; }
+
+/* Excluding tax */
+.price-excluding-tax { display:block; color:#888; }
+.price-excluding-tax .label { font-size:10px; text-transform:uppercase; white-space:nowrap; color:#888; }
+.price-excluding-tax .price { font-size:12px; font-weight:normal; color:#396f00; }
+
+/* Incl tax (for order tables) */
+.price-incl-tax { display:block; }
+.price-incl-tax .label { display:block; white-space:nowrap; }
+.price-incl-tax .price { display:block; font-weight:bold; }
+
+/* Excl tax (for order tables) */
+.price-excl-tax  { display:block; }
+.price-excl-tax .label { display:block; white-space:nowrap; }
+.price-excl-tax .price { display:block; font-weight:normal; }
+
+/* FTP */
+.weee { display:block; font-size:11px; color:#444; }
+.weee .price { font-size:11px; font-weight:normal; }
+
+/* Price range */
+.price-from { margin:0; }
+.price-from .price-label { font-size:12px; font-weight:bold; white-space:nowrap; }
+
+.price-to { margin:0; }
+.price-to .price-label { font-size:12px; font-weight:bold; white-space:nowrap; }
+
+/* Price notice next to the options */
+.price-notice { padding-left:7px; }
+.price-notice .price { font-weight:bold; }
+
+/* Price as configured */
+.price-as-configured { margin:0; }
+.price-as-configured .price-label { font-weight:bold; white-space:nowrap; text-transform:uppercase; }
+
+.price-box-bundle { padding:0 0 10px 0; }
+.price-box-bundle .price-box { margin:0 !important; padding:0 !important; }
+.price-box-bundle .price { color:#222; }
+f/********** Product Prices > */
+
+/* Tier Prices */
+.tier-prices { margin:10px 0; padding:10px; background:#f4f9ea; border:1px solid #ddd; }
+.tier-prices .benefit { font-style:italic; font-weight:bold; }
+.tier-prices .price { font-weight:bold;; }
+
+.tier-prices-grouped li .price { font-weight:bold; }
+
+/* Add to Links */
+.add-to-links { margin:3px 0 0; }
+.add-to-links li { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_add-to.gif) 2px 50% no-repeat; line-height:1.25; padding-left:12px; }
+.add-to-links li a { color:#444; }
+.add-to-links .separator { display:none; }
+
+/* Add to Cart */
+.add-to-cart label { float:left; margin-right:5px; font-weight:bold; line-height:20px; color:#555; }
+.add-to-cart .qty { float:left; margin-right:5px; }
+.add-to-cart button.button { float:left; margin:-3px 0 0; }
+
+/* Add to Links + Add to Cart */
+.add-to-box { margin:10px 0; }
+.add-to-box .add-to-cart { margin:10px 0; border:1px solid #dd5271; background-color:#fff; padding:20px; text-align:right; }
+.add-to-box .or { display:none !important; }
+.add-to-box .add-to-links { margin:10px 0; text-align:right; }
+.add-to-box .add-to-links li .separator { display:none !important; }
+
+
+.product-view {}
+
+.product-essential { padding:0 0 25px; }
+.product-essential h2 { font:bold 12px/1.25 Arial, Helvetica, sans-serif; }
+
+.product-collateral {}
+.product-collateral h2 { font-size:19px; font-weight:normal; line-height:1.15; }
+.product-collateral .box-collateral {}
+
+/* Product Images */
+.product-view .product-img-box { float:left; width:352px; }
+.col3-layout .product-view .product-img-box { float:none; margin:0 auto; }
+.product-view .product-img-box .product-image { margin:0 0 10px; border:1px solid #cacaca; }
+.product-view .product-img-box .product-image-zoom { position:relative; width:350px; height:320px; overflow:hidden; z-index:9; }
+.product-view .product-img-box .product-image-zoom img { position:absolute; left:0; top:0; cursor:move; }
+.product-view .product-img-box .zoom-notice { margin:0 0 10px; text-align:center; }
+.product-view .product-img-box .zoom { position:relative; z-index:9; height:24px; margin:0 auto 13px; padding:0 28px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/slider_bg.gif) 50% 50% no-repeat; cursor:pointer; }
+.product-view .product-img-box .zoom.disabled { -moz-opacity:.3; -webkit-opacity:.3; -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";/*IE8*/ opacity:.3; }
+.product-view .product-img-box .zoom #track { position:relative; height:18px; }
+.product-view .product-img-box .zoom #handle { position:absolute; left:0; top:3px; width:9px; height:18px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/magnifier_handle.gif) 0 0 no-repeat;  }
+.product-view .product-img-box .zoom .btn-zoom-out { position:absolute; left:10px; top:7px; }
+.product-view .product-img-box .zoom .btn-zoom-in { position:absolute; right:10px; top:7px; }
+.product-view .product-img-box .more-views h2 { font-size:10px; font-weight:normal; padding:0 0 2px; border-bottom:1px solid #ccc; margin:0 0 8px; text-transform:uppercase; }
+.product-view .product-img-box .more-views ul { margin-left:-10px }
+.product-view .product-img-box .more-views li { float:left; margin:0 0 8px 10px; }
+.product-view .product-img-box .more-views li a { float:left; width:66px; height:66px; border:1px solid #ddd; overflow:hidden; }
+
+.product-image-popup { margin:0 auto; }
+.product-image-popup .nav { font-weight:bold; text-align:center; }
+.product-image-popup .image { display:block; margin:10px 0;  }
+.product-image-popup .image-label { font-size:12px; font-weight:bold; margin:0 0 10px; color:#2f2f2f; }
+
+/* Product Shop */
+.product-view .product-shop { float:left; width:363px; }
+.col1-layout .product-view .product-shop { float:right; width:576px; }
+.col3-layout .product-view .product-shop { float:none; width:auto; }
+.product-view .product-shop .product-name { margin:0 0 5px; }
+.product-view .product-shop .product-name h1 { font:bold 22px/1.25 Arial, Helvetica, sans-serif; }
+.product-view .product-shop .availability { margin:10px 0; }
+.product-view .product-shop .short-description { margin:10px 0; }
+.product-view .product-shop .price-box { margin:10px 0; }
+.product-view .product-shop .add-to-links { margin:0; }
+.product-view .product-shop .add-to-links { text-align:right; }
+.product-view .product-shop .add-to-links li { display:inline; margin-left:12px; }
+.product-view .product-shop .add-to-links li .separator { display:none !important; }
+
+/* Product Options */
+.product-options { /*margin:20px 0 0;*/ padding:0 15px 10px; background-color:#f4f9ea; border:1px solid #ddd; }
+.product-options dt { padding:10px 0 0; font-weight:normal; }
+.product-options dt label {/* font-weight:bold;*/ }
+.product-options dt label em { color:#F00; }
+.product-options dt span.required { color:#eb340a; }
+.product-options dt .qty-holder { float:right; margin-right:15px; }
+.product-options dt .qty-holder label { vertical-align:middle; }
+.product-options dt .qty-disabled { background:none; border:0; padding:3px; color:#444; }
+.product-options dd { padding:5px 0; margin:0 0 5px; border-bottom:1px solid #ddd; }
+.product-options dl.last dd.last { border-bottom:0; padding-bottom:5px; margin-bottom:0; }
+.product-options dd input.input-text { width:98%; }
+.product-options dd textarea { width:98%; height:8em; }
+.product-options dd select { width:99%; }
+.product-options dd .multiselect option { border-bottom:1px dotted #d9e5ee; padding:2px 4px; }
+.product-options ul.options-list { margin-right:5px; }
+.product-options ul.options-list li { padding:2px 0; }
+.product-options ul.options-list input.radio { float:left; margin-top:3px; }
+.product-options ul.options-list input.checkbox { float:left; margin-top:2px; }
+.product-options ul.options-list .label { display:block; margin-left:18px; }
+.product-options ul.options-list label { font-weight:normal; }
+.product-options ul.validation-failed { padding:0 7px; }
+.product-options p.required { margin-bottom:0; padding:15px 0 0; }
+
+.product-options-bottom { /*background-color:#f6f6f6; padding:15px 20px; border:1px solid #e4e4e4;*/ padding-top:10px; border-top:0; }
+.product-options-bottom .tier-prices { margin:0; padding:0 0 10px; border:0; background:0; }
+.product-options-bottom .price-box { /*float:left;*/ margin:0; }
+.product-options-bottom .price-label { float:left; padding-right:5px; }
+.product-options-bottom .price-tax { float:left; }
+.product-options-bottom .add-to-cart { /*float:right;*/ margin:0; padding:0; border:0; background:0; }
+
+.product-shop .product-options-bottom .price-box { float:none; margin:0; }
+.product-shop .product-options-bottom .price-label { float:none; padding-right:0; }
+.product-shop .product-options-bottom .price-tax { float:none; }
+.product-shop .product-options-bottom .add-to-cart { clear:both; float:none; padding:12px 0 0; text-align:left; }
+
+/* Grouped Product */
+.product-view .grouped-items-table .price-box { margin:0; padding:0; }
+
+
+
+/* Mini Products Grid */
+.mini-products-grid { width:100%; }
+.mini-products-grid td { width:20%; padding:0 8px 8px 0; }
+.mini-products-grid .product-image { display:block; border:1px solid #cacaca; margin:0 0 10px; float:left;}
+.mini-products-grid .product-name { width:115px; margin:0 0 6px; overflow:hidden; }
+.mini-products-grid .product-name a { color:#444; text-decoration:underline; }
+.mini-products-grid .product-name a:hover { text-decoration:none; }
+.mini-products-grid td.empty {}
+.mini-products-grid td.last { padding-right:0; }
+.mini-products-grid .ratings .rating-box { float:none; display:block; margin:0 0 3px; }
+
+/* Block:Description */
+.product-view .box-description {}
+
+/* Block:Additional */
+.product-view .box-additional .data-table th,
+.product-view .box-additional .data-table td { line-height:1.25; }
+
+/* Block:Upsell */
+.box-up-sell { position:relative; border-top:1px solid #efefef; padding:25px 0 0; }
+.box-up-sell h2 { margin:0 0 8px; font:bold 30px/35px AngelinaRegular; color:#dd5271; text-transform:lowercase;}
+.up-sell-arrow { position:absolute; height:30px; width:18px; left:9px; /*bottom:4px;*/ top:55px; z-index:6;  }
+#product_tabs_upsell_products_contents h2 { display:block; }
+
+/* Block:Tags */
+.product-view .box-tags { margin:0; }
+.product-view .box-tags h3 { font-size:12px; }
+.product-view .box-tags .product-tags { display:block; margin:0 0 15px; }
+.product-view .box-tags .product-tags li { display:inline; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_pipe3.gif) 100% 4px no-repeat; padding:0 7px 0 4px; }
+.product-view .box-tags .product-tags li.first { padding-left:0; }
+.product-view .box-tags .product-tags li.last { background:none; padding-right:0; }
+.product-view .box-tags .form-add label { display:block; font-size:12px; font-weight:bold; margin:0 0 3px; }
+.product-view .box-tags .form-add .input-box { float:left; width:305px; margin:0 5px 0 0; }
+.product-view .box-tags .form-add input.input-text { width:299px; }
+.product-view .box-tags .form-add button.button span { height:23px; background-image:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_btn-small.png); line-height:20px; }
+.product-view .box-tags .note { margin:2px 0 0; font-size:10px; }
+
+/* Block:Reviews */
+.product-view .box-reviews dl { margin:15px 0; }
+.product-view .box-reviews dt a,
+.product-view .box-reviews dt span { font-weight:bold; }
+.product-view .box-reviews dd { margin:0 0 15px; }
+.product-view .box-reviews dd small { font-style:italic; }
+.product-view .box-reviews .form-add { margin:15px 0 0; }
+.product-view .box-reviews .form-add h3 { font-size:13px; font-weight:normal; }
+.product-view .box-reviews .form-add h3 span { font-weight:bold; }
+.product-view .box-reviews .form-add h4 { font-size:12px; }
+.product-view .box-reviews .form-add .data-table td { text-align:center; }
+.product-view .box-reviews .form-add .form-list { margin:15px 0 0; }
+.product-view .box-reviews .form-add .form-list .input-box { width:460px; }
+.product-view .box-reviews .form-add .form-list input.input-text,
+.product-view .box-reviews .form-add .form-list textarea { width:454px; }
+
+/* Send a Friend */
+.send-friend .form-list { width:535px; overflow:hidden; }
+.send-friend .form-list li { margin-right:-15px; }
+.send-friend .form-list li p { margin:0 15px 0 0; }
+.send-friend .buttons-set .limit { float:right; margin:0 7px 0 0; font-size:11px; line-height:25px; }
+/* ======================================================================================= */
+
+
+/* Content Styles ================================================================= */
+.product-name { margin:0; font-size:1em; font-weight:normal; line-height:1.55; }
+/*.product-name a { color:#444; }*/
+
+/* Product Tags */
+.tags-list { display:block; font-size:13px; border:1px solid #ddd; background:#f6f6f6; padding:10px; }
+.tags-list li { display:inline !important; margin:0 4px 0 0; }
+.tags-list li a { color:#1b2d3b; }
+
+/* Advanced Search */
+.advanced-search .form-list label { width:160px; padding-right:10px; }
+.advanced-search .form-list .input-box,
+.advanced-search .form-list .input-range { float:left; clear:none; }
+.advanced-search-amount { margin:0 0 10px; }
+.advanced-search-summary { margin:10px 0; border:1px solid #ddd; background:#ecf9ea; padding:10px; }
+.advanced-search-summary ul { float:left; width:49%; }
+.advanced-search-summary strong { color:#E17C24; }
+.advanced-search-summary li { margin:2px 0; }
+.advanced-search-summary p { clear:both; font-weight:bold; margin:0; }
+
+/* CMS Home Page */
+.cms-home .main { padding:0px; }
+.cms-home .subtitle {}
+.cms-index-index .subtitle {}
+
+/* Sitemap */
+.page-sitemap .links { text-align:right; margin:0 8px -22px 0; }
+.page-sitemap .links a { text-decoration:none; position:relative; }
+.page-sitemap .links a:hover { text-decoration:underline; }
+.page-sitemap .sitemap { margin:12px; }
+.page-sitemap .sitemap a { color:#444; }
+.page-sitemap .sitemap li { margin:3px 0; }
+.page-sitemap .sitemap li.level-0 { margin:10px 0 0; font-weight:bold; }
+.page-sitemap .sitemap li.level-0 a { color:#4f8100; }
+
+/* RSS */
+.rss-title h1 { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/i_rss-big.png) 0 3px no-repeat; padding-left:27px; }
+.rss-table .link-rss { display:block; line-height:1.55; background-position:0 4px; }
+/* ======================================================================================= */
+
+
+/* Shopping Cart ========================================================================= */
+.cart .page-title {}
+
+/* Checkout Types */
+.cart .page-title .checkout-types { display:none !important; }
+
+/* Shopping Cart Table */
+.cart-table thead tr{ background-image:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/thead-bg.jpg); height:46px; }
+/*.cart-table tbody tr { background-image:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tbody-trbg.jpg); background-position:center -7px; background-repeat:no-repeat; }*/
+.cart-table th { padding:6px 0; }
+.cart-table tbody td { padding:6px 20px; }
+
+.cart-table .product-name { font-weight:bold; margin:0 0 5px; color:#444; }
+.cart-table .item-msg { margin:5px 0; font-size:11px; font-weight:bold; color:#df280a; }
+.cart-table tfoot td { padding:5px 10px; }
+/*.cart-table .btn-continue { float:left; }
+.cart-table .btn-continue span { background:none; padding:0; font:normal 11px/25px Arial, Helvetica, sans-serif; color:#4f8100; text-transform:none; text-decoration:underline; }
+.cart-table .btn-continue span span { text-shadow:none !important; }
+.cart-table .btn-continue:hover span { text-decoration:none; }
+.cart-table .btn-update span {}*/
+/* cart button */
+.cart-table tbody td select { width:50px; padding:5px; background:none; border:1px solid #9188ba; }
+.cart-table .btn-continue span { font:22px/32px Museo-300; height:35px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/purple-btn.png) no-repeat 0 0; padding:0 0 0 18px; }
+.cart-table .btn-continue span span { background-position:100% 0; padding:0 45px 0 27px; }
+.cart-table .btn-continue:hover span { background-position:bottom left; }
+.cart-table .btn-continue:hover span span { background-position:bottom right; }
+
+.cart-table .btn-update span { font:22px/32px Museo-300; height:35px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/grey-btn.png) no-repeat 0 0; padding:0 0 0 18px; }
+.cart-table .btn-update span span { background-position:100% 0; padding:0 35px 0 17px; }
+.cart-table .btn-update:hover span { background-position:bottom left; }
+.cart-table .btn-update:hover span span { background-position:bottom right; }
+
+
+.cart-table .continue-shop { margin:20px 0 0;}
+.cart-table tbody tr td a.btn-remove2, .data-table tbody tr td a.link-remove  { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/cart-closesign.jpg) no-repeat left top; display:inline-block; width:18px; height:18px; text-indent:-999em; }
+.cart-table tbody tr td a.btn-remove2:hover, .data-table tbody tr td a.link-remove:hover { background-position:left bottom; }
+.cart-table tfoot tr td { padding:0; }
+
+
+/* Shopping Cart Collateral boxes */
+.cart .cart-collaterals { margin:25px 0 0; border:1px solid #9dcd2a; padding:15px; }
+.cart .cart-collaterals .col2-set .col-1 { width:222px; }
+.cart .cart-collaterals .col2-set .col-2 { /*width:655px; background:#ffebd9;*/ float:none; width:100%; }
+
+.cart .crosssell { border:1px solid #ddd; background:#f7f7f7; padding:10px; }
+.cart .crosssell h2 { font-size:12px; font-weight:bold; }
+.cart .crosssell .product-image { float:left; width:75px; height:75px; }
+.cart .crosssell .product-details { margin-left:85px; }
+.cart .crosssell .product-name { font-weight:bold; }
+.cart .crosssell li.item { margin:0 0 8px; padding-bottom:5px; border-bottom:1px solid #ddd; }
+.cart .crosssell li.last { border-bottom:0; padding-bottom:0; margin:0; }
+.cart .crosssell .link-compare { font-weight:normal; }
+.cart .no-crosssell { width:100%; overflow:hidden; }
+.cart .no-crosssell img { display:block; margin:0 0 10px; }
+
+/* Discount Codes & Estimate Shipping and Tax Boxes */
+.cart-bottompart td{ vertical-align:middle; }
+.coupon-sec { /*float:left;*/ width:295px; display:table; /*position:relative;*/ background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/coupon-slice.jpg) no-repeat 31% 1px; padding:23px 0 5px;} 
+.cart .shipping { background:#ffebd9; padding:10px 0; margin:0 12px; }
+.cart .discount h2 {/* float:left;*/ display:table-cell; font:bold 29px 'AngelinaRegular'; color:#9dcd2a; vertical-align:top; position:relative; z-index:1 }
+.cart .shipping h2 { float:left; width:225px; font:normal 14px/16px Arial, Helvetica, sans-serif; color:#d54c01; }
+.cart .shipping .shipping-form { margin-left:240px; }
+.cart .shipping .buttons-set { margin:10px 0 0; border:0; padding:0; text-align:left; }
+.cart .discount .buttons-set button.button,
+.cart .shipping .buttons-set button.button { float:none; margin:0; }
+.cart .discount .buttons-set button.button span,
+.cart .shipping .buttons-set button.button span { height:19px; background-image:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_btn-green.gif); padding:0 0 0 9px; font-size:10px; line-height:18px; color:#fff;text-shadow:none !important; }
+.cart .discount .buttons-set button.button span span,
+.cart .shipping .buttons-set button.button span span { padding:0 19px 0 10px; }
+
+/*.coupon-slice { position:absolute; top:-22px; left:74px; }*/
+
+.cart .discount { /*border-bottom:1px solid #f2d8c1;*/ }
+.cart .discount .discount-form { /*float:right;*/ display:table-cell; width:178px; /*border:1px solid #9188ba;*/ position:relative; z-index:1;}
+.cart .discount label { font-weight:bold; color:#555; }
+.cart .discount .discount-form .input-box { float:left; margin:0 0 0 9px; position:relative; width:136px;}
+.cart .discount .discount-form .input-box .validation-failed { border:1px solid #9188BA !important; border-right:none !important; background:none; }
+.cart .discount .discount-form .input-box .validation-advice { position:absolute; top:5px; }
+.cart .discount .discount-form input { font:13px 'Museo-500'; color:#acacac;  border:1px solid #9188ba; border-right:none; width:136px; padding:5px; height:15px;  }
+.cart .discount .discount-form .buttons-set { margin:0; padding:0; border:none; float:right; clear:none; position:relative; }
+.cart .discount .discount-form .buttons-set button { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/coupon-arrow_09.jpg) no-repeat left top; border:1px solid #9188ba; border-left:none; display:block; height:27px; width:22px; }
+.cart .discount .discount-form .buttons-set button span { display:none; }
+
+.cart .discount .discount-form .buttons-set button.cancel-btn { background:none; width:auto; height:auto; position:absolute; border:none; right:34px; bottom:-4px; }
+.cart .discount .discount-form .buttons-set button.cancel-btn span { display:block; background:#9188BA; -webkit-border-radius: 20px; -moz-border-radius: 20px; border-radius: 20px; }
+.cart .discount .discount-form .buttons-set button.cancel-btn span span { background:none; }
+/*.cart .discount .input-box { width:270px; }
+.cart .discount input.input-text { width:264px; }*/
+
+.cart .shipping p { margin:0 0 3px; }
+.cart .shipping .sp-methods { margin:10px 0 0; padding:6px 0 0; border-top:1px solid #f2d8c1; }
+.cart .shipping .form-list .input-box { width:270px; }
+.cart .shipping .form-list input.input-text { width:264px; }
+.cart .shipping .form-list select { width:270px; }
+
+/* Shopping Cart Totals */
+.cart .cart-total { /*float:left;*/ padding:0 25px 0 25px; margin:0 25px 0 0; border-right:1px solid #efefef; width:289px; }
+.cart .totals { /*background:#fff url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_cart-totals.gif) 0 0 no-repeat;;*//*float:right;padding:12px 0;width:655px;*/}
+.cart .totals table { /*float:right; width:400px; margin:0 0 8px; */}
+.cart .totals td { padding:0 0 0 5px; font:14px/18px 'Museo-500'; color:#626262; }
+.cart .totals tr.last td {}
+.cart .totals tfoot td {}
+.cart .totals #shopping-cart-totals-table tfoot tr td strong { font:normal 25px/32px 'Museo-500'; color:#dd5271; margin:5px 0 0; display:block; }
+.cart .totals .checkout-types { font-size:13px;/* padding:4px 0; text-align:right; float:right; margin:0 10px 0 0;*/ }
+.cart .totals .checkout-types li { clear:both; margin:0 0 5px; }
+.cart .totals button span { font:22px/32px Museo-300; height:35px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_btn-detail.png) no-repeat 0 0; padding:0 0 0 18px; }
+.cart .totals button span span { background-position:100% 0; padding:0 35px 0 17px; }
+.cart .totals button:hover span { background-position:bottom left; }
+.cart .totals button:hover span span { background-position:bottom right; }
+
+
+/* Options Tool Tip */
+.item-options dt { font-family:'Museo-700'; font-weight:normal; font-style:italic; }
+.item-options dd { padding-left:10px; }
+.truncated { cursor:help; }
+.truncated a.dots { cursor:help; text-decoration:none !important; }
+.truncated a.details { cursor:help; text-decoration:none !important; display:inline-block; border-bottom:1px dotted #4f8100; }
+.truncated .truncated_full_value { position:relative; z-index:999; }
+.truncated .truncated_full_value dl { position:absolute; top:-99999em; z-index:999; width:250px; padding:8px; border:2px solid #ddd; border-bottom-color:#666; background-color:#f6f6f6; }
+.truncated .truncated_full_value dt { margin-top:0; }
+.truncated .show dl { top:-20px; left:50%; }
+.col-left .truncated .show dl { left:30px; top:10px; }
+.col-right .truncated .show dl { left:-240px; top:10px; }
+/* ======================================================================================= */
+
+
+/* Checkout ============================================================================== */
+/********** < Common Checkout Styles */
+/* Shipping and Payment methods */
+.sp-methods { margin:0 0 8px; }
+.sp-methods dt { margin:13px 0 0; /*font-weight:bold;*/ }
+.sp-methods dd {}
+.sp-methods dd li { margin:5px 0; }
+.sp-methods label { /*font-weight:bold; color:#555;*/ }
+.sp-methods .price { /*font-weight:bold;*/ color:#9DCD2A; }
+.sp-methods .form-list { padding-left:20px; }
+.sp-methods .form-list li { margin:8px 0 8px; }
+.sp-methods select.month { width:154px; margin-right:10px; }
+.sp-methods select.year { width:96px; }
+.sp-methods input.cvv { width:3em !important; }
+.sp-methods .centinel-logos a { margin-right:3px; }
+.sp-methods .centinel-logos img { vertical-align:middle; }
+
+.please-wait { float:right; }
+.please-wait img { vertical-align:middle; }
+.cvv-what-is-this { font-size:11px; cursor:help; margin-left:10px; }
+
+/* Tooltip */
+.tool-tip { border:2px solid #ddd; border-bottom-color:#666; background:#f6f6f6; padding:15px 20px; position:absolute; z-index:9999; }
+.tool-tip .btn-close { margin:-9px -14px 0; text-align:right; }
+.tool-tip .btn-close a { display:block; margin:0 0 0 auto; width:12px; height:12px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/btn_window_close.gif) 100% 0 no-repeat; text-align:left; text-indent:-999em; overflow:hidden; }
+.tool-tip .tool-tip-content { padding:5px; }
+
+/* Gift Messages */
+.gift-messages h3 { font-size:12px; font-weight:bold; color:#e87403; }
+.gift-messages p.control { color:#8e8d8b; }
+.gift-messages-form { position:relative; }
+.gift-messages-form label { float:none !important; position:static !important; }
+.gift-messages-form h4 { font-size:12px; font-weight:bold; color:#e87403; }
+.gift-messages-form .whole-order { margin:0 0 25px; }
+.gift-messages-form .item { margin:0 0 10px; }
+.gift-messages-form .item .product-img-box { float:left; width:75px; }
+.gift-messages-form .item .product-image { margin:0 0 7px; }
+.gift-messages-form .item .number { margin:0; font-weight:bold; text-align:center; color:#8a8987; }
+.gift-messages-form .item .details { margin-left:90px; }
+.gift-messages-form .item .details .product-name { font-size:13px; font-weight:bold; margin:0 0 10px; }
+.gift-messages-form .item .details .form-list .field { width:255px; }
+.gift-messages-form .item .details .form-list .input-box { width:240px; }
+.gift-messages-form .item .details .form-list input.input-text { width:234px; }
+.gift-messages-form .item .details .form-list li.wide .input-box { width:500px; }
+.gift-messages-form .item .details .form-list li.wide textarea { width:494px; }
+
+.gift-message-link { font-size:11px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_collapse-gm.gif) 100% 6px no-repeat; padding-right:7px; }
+.gift-message-link.expanded { background-position:100% -40px; }
+.gift-message-row { background:#f2efe9; }
+.gift-message-row .btn-close { float:right; width:12px; height:12px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/btn_remove.gif) 0 0 no-repeat; font-size:0; line-height:0; text-indent:-999em; overflow:hidden; }
+
+/* Checkout Agreements */
+.checkout-agreements li { margin:30px 0; }
+.checkout-agreements .agreement-content { overflow:auto; height:12em; padding:10px; background:#fbfbfb; border:1px solid #e4e4e4; }
+.checkout-agreements .agree { margin:0; padding:10px 0 10px 11px; }
+.checkout-agreements .agree input.checkbox { margin-right:6px; }
+.checkout-agreements .agree label { font-weight:bold; color:#555; }
+
+.opc .checkout-agreements { padding:5px 30px; }
+.opc .checkout-agreements li { margin:20px 0 0; }
+.opc .checkout-agreements .agreement-content { background:#fff; padding:5px; }
+.opc .checkout-agreements .agree { padding-left:6px; }
+
+/* Centinel */
+.centinel {}
+
+.opc .centinel { padding:10px 30px; }
+
+/* Generic Info Set */
+.info-set { background:#fbfbfb; border:1px solid #ddd; margin:0 0 25px; padding:20px; }
+.info-set h2 { font-size:12px; font-weight:bold; margin:0 0 10px; }
+.info-set h3,
+.info-set h4 { font-size:12px; font-weight:bold; }
+.info-set h2 a,
+.info-set h3 a,
+.info-set h4 a { font-weight:normal; }
+.info-set h2.legend { margin:-20px -20px 15px; padding:3px 10px; background:#777; border-bottom:1px solid #777; position:relative; color:#fff; }
+.info-set h2.legend a { color:#fff; }
+.info-set h3.legend { margin:0 0 10px; }
+.info-set .divider { margin:0 -20px; padding:25px 0; position:relative; }
+.info-set .box { margin:0 0 15px; }
+.info-set .box h2 { color:#e26703; }
+.info-set .data-table .product-name { font-size:1em !important; font-weight:bold !important; color:#4f8100 !important; }
+.info-set .data-table .product-name a { font-weight:bold !important; }
+.info-set .data-table .item-options { margin:5px 0 0; }
+/********** Common Checkout Styles > */
+
+/* One Page Checkout */
+.block-progress { border:0; margin:0; }
+.block-progress .block-title { }
+.block-progress .block-title strong { font-size:12px; }
+.block-progress .block-content { background:none; padding:0; }
+.block-progress dt { font-size:13px; line-height:1.35; background:#efefef; border:1px solid #efefef; /*margin:0 0 6px;*/ padding:5px 8px; color:#9188BA; text-transform:capitalize; }
+.block-progress dd { border-top:0; padding:2px 8px; margin:0 0 6px; font-size:13px; line-height:20px; }
+.block-progress dt.complete { color:#9DCD2A;}
+.block-progress dt.complete a { text-transform:none; }
+.block-progress dd.complete {}
+.block-progress p { margin:0; }
+
+.opc .buttons-set { /*margin-top:0;*/ padding-top:0.5em; margin:20px 0 0; }
+.opc .buttons-set p.required { margin:0; padding:0 0 10px; }
+.opc .buttons-set.disabled button.button { display:none; }
+.opc .buttons-set .please-wait { height:28px; line-height:28px; }
+.opc .ul { list-style:disc outside; padding-left:18px; }
+
+.opc { position:relative; }
+.opc li.section { margin:0 0 10px;}
+
+.opc .step-title { border:1px solid #9188ba; background:#9f97c6; padding:10px;  text-align:right; -moz-border-radius:5px 5px 0px 0px; }
+.opc .step-title .number { float:left; /*background:#fff; border:1px solid #fff;*/ padding:0 3px; margin:0 5px 0 0; font:14px/18px 'Museo-700'; color:#fff; display:none;  }
+.opc .step-title h2 { float:left; margin:0; font:14px/18px 'Museo-700'; color:#fff; text-transform:uppercase; }
+.opc .step-title a { display:none; float:right; font-size:11px; line-height:16px; }
+
+.opc .allow .step-title { background:#9F97C6; border-color:#9188BA; color:#fff; cursor:pointer; }
+.opc .allow .step-title .number {}
+.opc .allow .step-title h2 { color:#fff; }
+.opc .allow .step-title a { display:block; font-size:13px; color:#fff; text-transform:lowercase; }
+
+.opc .active .step-title { background:#9188ba; border-color:#9188ba; color:#fff; cursor:default;   }
+.opc .active .step-title .number {}
+.opc .active .step-title h2 { color:#fff; }
+.opc .active .step-title a { display:none; }
+
+.opc .step { /*border:1px solid #efefef; border-top:0;*/  padding:25px 25px 25px 0; position:relative; }
+.opc .step .tool-tip { right:30px; }
+
+#opc-login h3 { font:14px/18px 'Museo-500'; color:#9188ba; /*border-bottom:1px solid #e4e4e4; padding-bottom:2px;*/ margin:0 0 10px; /*text-transform:capitalize;*/ }
+#opc-login h4 { font:14px/18px 'Museo-500'; }
+
+#opc-shipping_method .buttons-set { border-top:0; }
+.opc .gift-messages-form { margin:0 -30px; background:#f4f4f4; border:1px solid #ddd; border-width:1px 0; padding:22px 24px 22px 30px; }
+.opc .gift-messages-form .inner-box { padding:5px; height:260px; overflow:auto; }
+
+#opc-review .step { /*padding:0;*/ }
+#opc-review .product-name { font-weight:bold; }
+#opc-review .item-options { margin:5px 0 0; }
+#opc-review .buttons-set { border:0; padding:15px 30px; }
+#opc-review .buttons-set p { margin:0; line-height:28px; }
+#opc-review .buttons-set .please-wait { height:28px; line-height:28px; }
+
+#checkout-step-login .col2-set .col-1 p strong { font-weight:normal; }
+#checkout-step-login .col2-set .col-1 ul li { list-style:disc inside; }
+
+#checkout-progress-wrapper {/* margin:58px 0 0; */}
+#checkout-progress-wrapper .block-title { display:none; }
+/* Multiple Addresses Checkout */
+.checkout-progress { padding:0 90px; margin:0 0 20px; }
+.checkout-progress li { float:left; width:19%; margin:0 3px 0 0; border-top:6px solid #999; padding:2px 0 0; font-weight:bold; text-align:center; color:#888; }
+.checkout-progress li.active { border-top-color:#e96200; color:#e96200; }
+
+.multiple-checkout h2 { font-size:12px; font-weight:bold; margin:0 0 10px; }
+.multiple-checkout h3,
+.multiple-checkout h4 { font-size:12px; font-weight:bold; }
+.multiple-checkout h2 a,
+.multiple-checkout h3 a,
+.multiple-checkout h4 a { font-weight:normal; }
+.multiple-checkout .data-table .product-name { font-size:1em !important; font-weight:bold !important; color:#4f8100 !important; }
+.multiple-checkout .data-table .product-name a { font-weight:bold !important; }
+.multiple-checkout .data-table .item-options { margin:5px 0 0; }
+
+.multiple-checkout .gift-messages { margin:15px 0 0; }
+
+.multiple-checkout .tool-tip { top:50%; margin-top:-120px; right:20px; }
+
+.multiple-checkout .col2-set,
+.multiple-checkout .col3-set { background:#fbfbfb; border:1px solid #ddd; margin:0 0 25px; padding:20px; }
+.multiple-checkout .col2-set h2.legend { margin:-20px -20px 15px; padding:3px 10px; background:#777; border-bottom:1px solid #777; position:relative; color:#fff; }
+.multiple-checkout .col2-set h3.legend { margin:0 0 10px; }
+.multiple-checkout .col2-set .divider { margin:0 -20px; padding:25px 0; position:relative; }
+.multiple-checkout .box { margin:0 0 15px; }
+
+.multiple-checkout .place-order .please-wait { float:right; padding:5px 10px 0 0; }
+.multiple-checkout .place-order .grand-total { float:right; }
+.multiple-checkout .place-order .grand-total .inner {}
+.multiple-checkout .place-order .grand-total big { float:left; margin-right:12px; font-size:1.5em; font-weight:bold; line-height:28px; color:#e26703; }
+.multiple-checkout .place-order .grand-total div { float:left; }
+
+/* Step 1 */
+#multiship-addresses-table td { padding:10px; }
+#multiship-addresses-table tfoot td { padding:5px 10px; }
+
+/* Step 2 */
+.multiple-checkout .gift-messages-form .item .details .form-list { width:100%; overflow:hidden; }
+.multiple-checkout .gift-messages-form .item .details .form-list li { margin-right:-15px; }
+.multiple-checkout .gift-messages-form .item .details .form-list .field { width:230px; }
+.multiple-checkout .gift-messages-form .item .details .form-list .input-box { width:215px; }
+.multiple-checkout .gift-messages-form .item .details .form-list input.input-text { width:209px; }
+.multiple-checkout .gift-messages-form .item .details .form-list li.wide .input-box { width:445px; }
+.multiple-checkout .gift-messages-form .item .details .form-list li.wide textarea { width:439px; }
+.checkout-multishipping-shipping .box-sp-methods { border:1px solid #ddd; background:#eee; padding:13px; position:relative; }
+.checkout-multishipping-shipping .box-sp-methods .pointer { display:none; }
+
+/* Step 3 */
+.checkout-multishipping-billing .multiple-checkout { position:relative; }
+/* ======================================================================================= */
+
+
+/* Account Login/Create Pages ============================================================ */
+.account-login .content { min-height:200px; /*padding:0 10px;*/ }
+.account-login .content h2, #overlay_form .account-create .create-cont h2 { margin:0 0 5px; background:none; padding:0; font:normal 15px 'Museo-700'; color:#9188ba; }
+.account-login .buttons-set { margin:0; border:none; padding:0;}
+
+.account-create {}
+/* Account Login/Create Pages ============================================================ */
+
+
+/* My Account ============================================================================= */
+.my-account .title-buttons .link-rss { float:none; margin:0; }
+
+/********** < Dashboard */
+.dashboard .welcome-msg { margin:0 0 1.5em 0; }
+.dashboard .welcome-msg p { margin:0;  }
+.dashboard .welcome-msg p strong { font:14px/18px 'Museo-700'; /*font-weight:bold;*/ color:#dd5271; }
+.dashboard .col2-set { margin:0 0 15px; }
+
+/* General Box */
+.box-account { margin:0 0 15px; }
+.box-account .box-head { margin:0 0 10px; text-align:right; border-bottom:1px solid #efefef; padding:0 0 5px 0; }
+.box-account .box-head h2 { float:left; margin:0; font:18px/22px 'Museo-700'; /*font-weight:bold;*/ color:#dd5271; }
+.box-account .box-head a { font-size:13px; text-transform:lowercase; }
+
+.dashboard .box .box-title { /*background:#f1f1f1; padding:2px 10px;*/ margin:0 0 5px; text-align:right; }
+.dashboard .box .box-title h3,
+.dashboard .box .box-title h4 { float:left; margin:0; font-size:15px; font-weight:normal; color:#9188ba; /*font-weight:bold;*/ line-height:1.35; }
+.dashboard .box .box-title a { font-size:13px; color:#9dcd2a; text-transform:lowercase; }
+.dashboard .box .box-title a:hover { color:#dd5271; }
+.dashboard .box .box-content { /*padding:0 10px;*/ font:13px/18px 'Museo-500'; }
+.dashboard .box .box-content a { color:#9dcd2a;	 }
+.dashboard .box .box-content a:hover { color:#dd5271; }
+
+/* Block:Recent Orders */
+.dashboard .box-recent {}
+
+/* Block:Account Information */
+.dashboard .box-info {}
+.dashboard .box-info h4 { font-size:15px; font-weight:normal; color:#9188ba; /*font-weight:bold;*/ line-height:1.35; margin:0 0 5px;}
+
+/* Block:Reviews */
+.dashboard .box-reviews .box-head { background:#f1f1f1; padding:2px 10px; margin:0 0 12px; }
+.dashboard .box-reviews .box-head h2 { font-size:12px; font-weight:bold; line-height:1.35; color:#444; }
+.dashboard .box-reviews .number { display:none; float:left; font-size:10px; font-weight:bold; line-height:1; color:#fff; margin:3px -20px 0 0; padding:2px 3px; background:#0a263c; }
+.dashboard .box-reviews .details { padding:0 10px; }
+.dashboard .box-reviews li.item { margin:0 0 7px; }
+.dashboard .box-reviews li.item.last { margin:0; }
+.dashboard .box-reviews .ratings { margin:7px 0 0; }
+
+/* Block:Tags */
+.dashboard .box-tags .box-head { background:#f1f1f1; padding:2px 10px; margin:0 0 12px; }
+.dashboard .box-tags .box-head h2 { font-size:12px; font-weight:bold; line-height:1.35; color:#444; }
+.dashboard .box-tags .number { display:none; float:left; font-size:10px; font-weight:bold; line-height:1; color:#fff; margin:3px -20px 0 0; padding:2px 3px; background:#0a263c; }
+.dashboard .box-tags .details { padding:0 10px; }
+.dashboard .box-tags li.item { margin:0 0 7px; }
+.dashboard .box-tags li.item.last { margin:0; }
+.dashboard .box-tags .tags strong,
+.dashboard .box-tags .tags ul,
+.dashboard .box-tags .tags ul li { display:inline; }
+/********** Dashboard > */
+
+/* Address Book */
+.addresses-list h2 { background:#f1f1f1; padding:2px 10px; margin:0 0 12px; font-size:13px; font-weight:bold; line-height:1.25; }
+.addresses-list h3 { font-weight:bold; font-size:12px; }
+.addresses-list address { margin:0 0 3px; }
+.addresses-list p { margin:0; }
+.addresses-list a { font-weight:bold; }
+.addresses-list .link-remove {}
+.addresses-list .separator { margin:0 3px; }
+.addresses-list li.item { padding:0 10px; margin:0 0 12px; }
+.addresses-list li.empty {}
+.addresses-list li.empty p { /*font-weight:bold;*/ }
+.addresses-list .addresses-additional li.item {}
+
+/* Order View */
+.order-info dt { display:none; }
+.order-info ul { margin-bottom:15px; border-bottom:1px solid #666; background:#f2f2f2 url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_tabs.gif) 0 100% repeat-x; }
+.order-info li{ float:left; border-right:1px solid #a4a4a4; border-left:1px solid #fff; font-size:1.1em; line-height:1em; }
+.order-info li.first { border-left:0; }
+.order-info li.last { border-right:0; }
+.order-info li a { display:block; padding:6px 15px; color:#444; }
+.order-info li a:hover { background-color:#ddd; text-decoration:none; color:#444; }
+.order-info li.current { background-color:#666; font-weight:bold; padding:6px 15px; color:#fff; }
+
+.order-date { margin:10px 0; }
+
+.order-info-box { margin:0 0 15px; }
+.order-info-box h2 { font-size:13px; font-weight:bold; border-bottom:1px solid #ddd; margin:0 0 8px; }
+.order-info-box .box-payment p { margin:0 0 5px; }
+.order-info-box .box-payment th { font-weight:bold; padding-right:7px; }
+
+.order-items { width:100%; overflow-x:auto; }
+.order-items h2 { font-weight:bold; font-size:13px; }
+.order-items h3 { font-weight:bold; font-size:12px; }
+.order-items .product-name { font-weight:bold !important; }
+.order-items .link-print { float:right; font-size:10px; text-transform:uppercase; }
+.order-items p .link-print { float:none; font-weight:bold; font-size:11px; text-transform:none; }
+
+.order-gift-message { margin:15px 0; }
+.gift-message dt strong { color:#555; }
+.gift-message dd { margin:5px 0 0; font-size:13px; }
+
+.order-about { margin:15px 0; }
+.order-about dt { font-weight:bold; }
+.order-about dd { font-size:13px; margin:0 0 7px; }
+
+.tracking-table { margin:0 0 15px; }
+.tracking-table th { font-weight:bold; white-space:nowrap; }
+.tracking-table th,
+.tracking-table td { padding:1px 5px 0 0; }
+
+.tracking-table-popup { width:100%; }
+.tracking-table-popup th { font-weight:bold; white-space:nowrap; }
+.tracking-table-popup th,
+.tracking-table-popup td { padding:1px 8px; }
+
+/* Order Print Pages */
+.page-print .print-head { margin:0 0 15px; }
+.page-print .print-head .logo { float:left; }
+.page-print .print-head address { float:left; margin-left:15px; }
+.page-print h1 { font-size:15px; font-weight:bold; }
+.page-print h2,
+.page-print h3 { font-size:12px; font-weight:bold; }
+.page-print h2.h2 { font-size:15px; font-weight:bold; text-align:right; }
+.page-print .order-date { border-bottom:1px solid #ccc; padding:0 0 10px; margin:0 0 10px; }
+.page-print .col2-set { margin:0 0 10px; }
+/* Price Rewrites */
+.page-print .gift-message-link { display:none; }
+.page-print .price-excl-tax,
+.page-print .price-incl-tax { display:block; white-space:nowrap; }
+.page-print .cart-price,
+.page-print .price-excl-tax .label,
+.page-print .price-incl-tax .label,
+.page-print .price-excl-tax .price,
+.page-print .price-incl-tax .price { display:inline; }
+
+/* My Wishlist */
+/*.my-wishlist .data-table td { padding:10px; }*/
+.my-wishlist .product-image { display:block; /*width:113px; height:122px;*/ margin:0 0 5px; }
+.my-wishlist textarea { display:block; width:97%; height:109px; }
+.my-wishlist .buttons-set { border:0; padding:0;  }
+.my-wishlist .buttons-set button.button { float:none; }
+.my-wishlist .buttons-set .btn-add span,
+.my-wishlist .buttons-set .btn-share span {}
+#wishlist-table .add-to-links { white-space:nowrap; }
+
+/* My Tags */
+.my-tag-edit { float:left; margin:0 0 10px; }
+.my-tag-edit .btn-remove { float:right; margin:5px 0 0 5px; }
+#my-tags-table { clear:both; }
+#my-tags-table td { padding:10px; }
+#my-tags-table .add-to-links { white-space:nowrap; }
+
+/* My Reviews */
+#my-reviews-table td { padding:10px; }
+#my-reviews-table .rating-box { margin:3px 0 0; }
+
+.product-review .product-img-box { float:left; width:140px;  }
+.product-review .product-img-box .product-image { display:block; width:125px; height:125px; }
+.product-review .product-img-box .label { font-size:11px; margin:0 0 3px; }
+.product-review .product-img-box .ratings .rating-box { float:none; display:block; margin:0 0 3px; }
+.product-review .product-details { margin-left:150px; }
+.product-review .product-name { font-size:16px; font-weight:bold; margin:0 0 10px; }
+.product-review h3 { font-size:12px; margin:0 0 3px; color:#2f2f2f; }
+.product-review .ratings-table { margin:0 0 10px; }
+.product-review dt { font-weight:bold; }
+.product-review dd { font-size:13px; margin:5px 0 0; }
+/* ======================================================================================= */
+
+
+/* BABY NATURALS - FOOTER */
+#footer-container {/*width:980px;*/margin:0 auto;clear:left;margin:0;height:200px; border-top:1px solid #efefef; padding:15px 0 0 0;}
+.cms-home #footer-container { margin:46px 0 0 0; }
+.footer-block {width:196px;position:relative;float:left;}
+.footer-block p {font-family:Museo-500;color:#4f4f4f;font-size:11px;line-height:18px;}
+p.footer-block-heading {padding-bottom:0px;margin-bottom:5px;text-transform:uppercase;font-family:Museo-700;/*font-weight:bold;*/color:#3b3f45;font-size:12px;}
+.footer-block ul {list-style:none;line-height:18px;}
+.footer-block ul li a{font-family:Museo-500;color:#4f4f4f;font-size:11px;text-decoration:none;}
+.footer-block ul li a:hover {color:#9188ba;}
+.footer-block p.feel-free {margin-bottom:0;padding-bottom:0;}
+.footer-block .phone-number {color:#9dcd2a;font-size:18px; line-height:24px; padding:5px 0px 5px 0px; margin:0;}
+.footer-block p.email-us {margin-bottom:0;padding-bottom:0;}
+.footer-block .email-link {padding-top:5px;}
+.footer-block .email-link a {font-family:'AngelinaRegular';font-size:25px;color:#9188ba;text-decoration:none;font-weight:bold;}
+.footer-block .email-link a:hover { color:#9DCD2A; }
+
+
+/* ======================================================================================= */
+
+/* Sample Data============================================================================ */
+.home-callout { margin-bottom:12px; }
+.home-callout img { display:block }
+/*.home-spot { float:left; width:470px; margin-left:20px; }*/
+.best-selling h3 { margin:12px 0 6px 0; color:#e25203; font-size:1.2em; }
+.best-selling table { border-top:1px solid #ccc; }
+.best-selling tr.odd { background:#eee url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/best_selling_tr_odd_bg.gif) 0 100% repeat-x; }
+.best-selling tr.even { background:#fff url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/best_selling_tr_even_bg.gif) 0 100% repeat-x; }
+.best-selling td { width:50%; border-bottom:1px solid #ccc; padding:8px 10px 8px 8px; font-size:11px; }
+.best-selling .product-img { float:left; border:2px solid #dcdcdc; }
+.best-selling .product-description { margin-left:107px; line-height:1.3em; }
+.best-selling a.product-name,
+.home-spot .best-selling a.product-name:hover { color:#203548; }
+/* ======================================================================================= */
+
+
+/* ========================================
+	HOMEPAGE LAYOUT
+=============================================== */
+
+.wired-home { }
+
+.wired-home .slider { float:left; width:674px; height:328px; position:relative; }
+#slider .panel img { height:328px; width:674px;}
+#slider .panel span.comment { display:block;float:left;width:674px;}
+.wired-home .promo-right { float:right; width:265px; }
+.wired-home .promo-right img { margin-bottom:22px; }
+.wired-home .promo-right img.last { margin-bottom:0px; }
+
+.wired-home .promo-bottom { clear:both; margin-top:15px; }
+
+.wired-home .subpromo { margin:20px 0px;clear:both; }
+.wired-home .subpromo .brands { float:right; }
+.wired-home .subpromo .offers { float:left; }
+.wired-home .subpromo .offers img { margin-right:20px; float:left;white-space:pre-wrap; }
+
+.wired-home .featured-social { margin-top:15px; }
+.wired-home .subscribe { min-height:110px;width:235px; -moz-border-radius:10px; -webkit-border-radius:10px; float:right;background:#f4f4f4 url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/background/featured_product_bg.gif) repeat-x; padding:10px 15px; }
+.wired-home .subscribe strong { font-size:16px; }
+.wired-home .form-subscribe { margin:8px 0; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/background/subscribe_bg.png) no-repeat; width:233px; height:33px;position:relative; }
+.wired-home .form-subscribe label { display:none; }
+.wired-home .form-subscribe label,
+.wired-home .form-subscribe .input-box,
+.wired-home .form-subscribe button.button { float:left;}.form-subscribe button.button { float:left; position:absolute;right:5px;}
+.wired-home .form-subscribe label { padding-top:2px; font-weight:bold; color:#555; }
+.wired-home .form-subscribe .input-box { width:136px; margin:0 5px;  }
+.wired-home .form-subscribe input.input-text { width:160px; padding:10px 0 0 40px; background:none; border:none;}
+.wired-home .form-subscribe button.button { position:absolute; float:right; top:10px;}
+.wired-home .form-subscribe button.button span { text-indent:-9999px; height:13px;width:12px; background:transparent url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/buttons/subscribe_btn.gif) no-repeat top left; line-height:13px; }
+.wired-home .form-subscribe button.button span span { background:none !important; color:#444 !important; text-shadow:0px 1px #fff !important; }
+
+/* Clears ================================================================================ */
+.clearer:after,.wired-home .promo:after,.footer .f-left:after,
+.header-container:after,.featured-social:after,
+.header-container .top-container:after, .copyright:after,.wired-home .subpromo:after,
+.header:after,
+.top-bar:after,
+.quick-access:after,
+.form-search:after,
+#nav:after,
+.main:after,
+.footer:after,
+.footer .form-subscribe:after,
+.footer-container .bottom-container:after,
+.col-main:after,
+.col2-set:after,
+.col3-set:after,
+.col4-set:after,
+.search-autocomplete li:after,
+.block .block-content:after,
+.block .actions:after,
+.block li.item:after,
+.block-poll li:after,
+.block-layered-nav .currently li:after,
+.page-title:after,
+.products-grid:after,
+.products-list li.item:after,
+.box-account .box-head:after,
+.dashboard .box .box-title:after,
+.order-info ul:after,
+.box-reviews li.item:after,
+.box-tags li.item:after,
+.pager:after,
+.sorter:after,
+.ratings:after,
+.add-to-box:after,
+.add-to-cart:after,
+.product-essential:after,
+.product-collateral:after,
+.product-tabs:after,
+.product-view .product-img-box .more-views ul:after,
+.product-view .box-tags .form-add:after,
+.product-options .options-list li:after,
+.product-options-bottom:after,
+.product-review:after,
+.cart:after,
+.cart-collaterals:after,
+.cart .crosssell li.item:after,
+.opc .step-title:after,
+.checkout-progress:after,
+.multiple-checkout .place-order:after,
+.group-select li:after,
+.form-list li:after,
+.form-list .field:after,
+.buttons-set:after,
+.page-print .print-head:after,
+.advanced-search-summary:after,
+.gift-messages-form .item:after,
+.send-friend .form-list li p:after, #footer-container:after, .clear, .fine-print:after, .quick-find:after, .pager:after { display:block; content:"."; clear:both; font-size:0; line-height:0; height:0; overflow:hidden; }
+
+
+/* Clear Fix */
+.clearfix:after {
+	content:".";
+	display:block;
+	clear:both;
+	visibility:hidden;
+	line-height:0;
+	height:0;
+}
+ 
+.clearfix {
+	display:inline-block;
+}
+ 
+html[xmlns] .clearfix {
+	display:block;
+}
+ 
+* html .clearfix {
+	height:1%;
+}
+
+    
+/* ======================================================================================= */
+
+
+/* BABY NATURALS - PRODUCT DETAIL */
+
+.catalog-product-view .col1-layout .main { padding:16px 0 40px; }
+.bn-short-description {background-color:#f6f5fc;padding:20px;margin-bottom:20px;}
+.bn-short-description {padding:15px;color:#626262;font-family:Museo-500;font-size:14px; line-height:20px;}
+.bn-short-description h2 {font-family:'AngelinaRegular';font-size:32px;color:#2b3a65;font-weight:bold;}
+.bn-short-description ul {margin:10px 0 0;padding:0 !important;}
+.bn-short-description ul li {margin:0;padding:5px 0 5px;/*line-height:12px;*/color:#626262;font-family:Museo-500;font-size:14px;background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bn-list-bullet.gif) no-repeat left 10px;padding-left:15px;}
+
+.bn-product-price .price-box .old-price .price-label {display:none;}
+.bn-product-price .price-box .special-price .price-label {display:none;}
+.bn-product-price .price-box > div { display:inline-block; padding:0 2px; }
+.bn-product-price .price-box { margin:0 0 5px 0; text-align:center; }
+/*.bn-product-price .price-box .old-price-container {float:left; display:inline-block;}
+.bn-product-price .price-box .special-price-container {float:left; display:inline-block;}*/
+
+.bn-product-price .price-box span.price { font:normal 30px Museo-500; }
+.bn-product-price .price-box p.special-price span.price {color:#dd5271;font:normal 30px Museo-500;}
+.bn-product-price .price-box p.old-price span.price {color:#ccc; font:normal 30px Museo-500; margin-right:10px;}
+.catalog-product-view .page-title h1 {color:#2b3a65;font-family:Museo-500;font-size:27px; line-height:32px; text-transform:capitalize; font-weight:normal;}
+.catalog-product-view .page-title p {color:#dd5271;font-family:Museo-500;font-size:19px; line-height:22px; margin:0;}
+p.availability {display:none;}
+/*.bn-product-view-left {margin-right:20px;}*/
+
+.bn-suggestions p {font-family:'AngelinaRegular';font-size:30px;color:#9dcd2a;font-weight:bold;}
+
+/* Product Images */
+.bn-product-view-right { float:right; position:relative; width:475px; }
+.bn-product-view-left { float:left; position:relative; width:475px; }
+.bn-product-view { /*float:left; width:475px;*/ }
+.bn-product-view-left .bn-product-img-box { /*float:left;*/ width:453px; border:1px solid #efefef; margin:0 0 10px; padding:10px; }
+.bn-product-view-left .bn-product-img-box .product-image { margin:0 0 10px; border:1px solid #efefef; }
+.bn-product-view-left .bn-product-img-box .product-image-zoom { position:relative; width:473px; height:370px; overflow:hidden; z-index:9; }
+.bn-product-view-left .bn-product-img-box .product-image-zoom img { position:absolute; left:0; top:0; cursor:move; }
+.bn-product-view-left .bn-product-img-box .zoom-notice { margin:0 0 10px; text-align:center; }
+.bn-product-view-left .bn-product-img-box .zoom { position:relative; z-index:9; height:24px; margin:0 auto 13px; padding:0 28px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/slider_bg.gif) 50% 50% no-repeat; cursor:pointer;display:none; }
+.bn-product-view-left .bn-product-img-box .zoom.disabled { -moz-opacity:.3; -webkit-opacity:.3; -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";/*IE8*/ opacity:.3; }
+.bn-product-view-left .bn-product-img-box .zoom #track { position:relative; height:18px; }
+.bn-product-view-left .bn-product-img-box .zoom #handle { position:absolute; left:0; top:3px; width:9px; height:18px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/magnifier_handle.gif) 0 0 no-repeat;  }
+.bn-product-view-left .bn-product-img-box .zoom .btn-zoom-out { position:absolute; left:10px; top:7px; }
+.bn-product-view-left .bn-product-img-box .zoom .btn-zoom-in { position:absolute; right:10px; top:7px; }
+.bn-product-view-left .bn-product-img-box .more-views h2 { font-size:10px; font-weight:normal; padding:0 0 2px; border-bottom:1px solid #efefef; margin:0 0 8px; text-transform:uppercase; }
+.bn-product-view-left .bn-product-img-box .more-views ul { margin-left:-10px }
+.bn-product-view-left .bn-product-img-box .more-views li { float:left; margin:0 0 8px 10px; }
+.bn-product-view-left .bn-product-img-box .more-views li a { float:left; width:66px; height:66px; border:1px solid #efefef; overflow:hidden; }
+
+#nav1 { text-align:center; height:11px; margin:15px 0; }
+#nav1 a { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/pro-dot.png) no-repeat left top; width:11px; height:11px; display:inline-block; text-indent:-999em; margin:0 2px; }
+#nav1 a:hover, #nav1 a.activeSlide { background-position:left bottom; }
+
+
+.bn-add-to-cart .add-to-box {  margin: 20px auto 0; width: 230px; }
+.bn-add-to-cart .add-to-box .add-to-cart button.button { float:none; margin:0; }
+.bn-add-to-cart .add-to-box .add-to-cart { padding:0; border:none; text-align:center; margin:0; }
+.bn-add-to-cart .add-to-box .add-to-cart button span { font:22px/32px Museo-300; height:35px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_btn-detail.png) no-repeat 0 0; padding:0 0 0 18px; }
+.bn-add-to-cart .add-to-box .add-to-cart button span span { background-position:100% 0; padding:0 75px 0 57px; }
+.bn-add-to-cart .add-to-box .add-to-cart button:hover span { background-position:bottom left; }
+.bn-add-to-cart .add-to-box .add-to-cart button:hover span span { background-position:bottom right; }
+.bn-add-to-cart .add-to-box .add-to-links { text-align:center; }
+.bn-add-to-cart .add-to-box .add-to-links li { background:none; text-align:center; }
+.bn-add-to-cart .add-to-box .add-to-links li a { font:13px/20px 'Museo-500'; color:#9DCD2A; }
+.bn-add-to-cart .add-to-box .add-to-links li a:hover { color:#DD5271; }
+
+
+/* Product Tabs */
+.bn-product-collateral{border:1px solid #EFEFEF; padding:16px;}
+.bn-product-collateral h3, .bn-product-brand-info h3 {font-family:'AngelinaRegular';font-size:26px;color:#9dcd2a;font-weight:bold;text-transform:lowercase;}
+.product-tabs { margin-bottom:15px; background:#fff; }
+.product-tabs li { float:left; font-size:12px; line-height:1.5em;position:relative;z-index:100;font-family:Museo-500;}
+.product-tabs li.first { border-left:1px solid #ccc;}
+.product-tabs li.first.active { border-left:1px solid #a2d035; }
+.product-tabs li.last { border-right:0; }
+.product-tabs a { display:block; padding:6px 15px; color:#444;border-top:1px solid #ccc;border-right:1px solid #ccc; padding-top:50px;width:89px;text-align:center; background-color:#fff;border-bottom:1px solid #a2d035; }
+.product-tabs a:hover { text-decoration:none; color:#4a5678; }
+.product-tabs li.active a,
+.product-tabs li.active a:hover { background-color:#fff; color:#a2d035; }
+.product-tabs li.active a {border-top:1px solid #a2d035;border-right:1px solid #a2d035;border-left:1px solid #a2d035;border-bottom:0px; !important;}
+.product-tabs li.first.active a {border-left:0px !important;}
+.product-tabs-content h2 { display:none; font-size:12px; font-weight:bold; }
+.product-tabs-content {border:1px solid #a2d035;position:relative;bottom:18px;z-index:1;padding:15px;width:570px;font-family:Museo-500;color:#4f4f4f;font-size:12px;line-height:20px;height:90px;}
+.bn-product-brand-info p {font-family:Museo-500;color:#4f4f4f;font-size:12px;line-height:20px;}
+
+/* Product Tabs - Backgrounds*/
+.bn-product-collateral .product-tabs li#product_tabs_ingredients.active a {background:#fff url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab_ingredients_active.gif) no-repeat center 4px !important;}
+.bn-product-collateral .product-tabs li#product_tabs_ingredients a {background:#fff url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab_ingredients.gif) no-repeat center 4px !important;}
+.bn-product-collateral .product-tabs li#product_tabs_origin.active a {background:#fff url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab_origin_active.gif) no-repeat center 4px !important;}
+.bn-product-collateral .product-tabs li#product_tabs_origin a {background:#fff url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab_origin.gif) no-repeat center 4px !important;}
+.bn-product-collateral .product-tabs li#product_tabs_certifications.active a {background:#fff url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab_certifications_active.gif) no-repeat center 4px !important;}
+.bn-product-collateral .product-tabs li#product_tabs_certifications a {background:#fff url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab_certifications.gif) no-repeat center 4px !important;}
+.bn-product-collateral .product-tabs li#product_tabs_care.active a {background:#fff url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab_care_active.gif) no-repeat center 4px !important;}
+.bn-product-collateral .product-tabs li#product_tabs_care a {background:#fff url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab_care.gif) no-repeat center 4px !important;}
+.bn-product-collateral .product-tabs li#product_tabs_age.active a {background:#fff url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab_age_active.gif) no-repeat center 4px !important;}
+.bn-product-collateral .product-tabs li#product_tabs_age a {background:#fff url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab_age.gif) no-repeat center 4px !important;}
+
+/* Product Tabs - Product Desc and Brand*/
+
+.bn-brand-nav {list-style:none;margin:0px 0px 15px 0px;padding:0;}
+.bn-brand-nav > li > a {display:block;}
+.bn-brand-nav-tabs{*zoom:1; height:43px;}
+.bn-brand-nav-tabs:before, .bn-brand-nav-tabs:after {display:table;content:"";}
+.bn-brand-nav-tabs:after {clear:both;}
+.bn-brand-nav-tabs > li {float:left;}
+/*.bn-brand-nav-tabs > li > a {line-height:100px;width:222px;height:39px;}*/
+.bn-brand-nav-tabs > li > a {background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab-active.png) no-repeat center top;text-decoration:none;font:normal 20px/25px Museo-500;color:#9188ba;/*padding-top:7px;text-transform:uppercase;*//*border:1px solid #efefef;*/  text-align:center; margin-right:10px; width:222px; height:36px; padding:7px 0 0 0;}
+.bn-brand-nav-tabs > .active > a,.bn-brand-nav-tabs li > a:hover {color:#fff;background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab-active-arrow.png) no-repeat center top; /*height:43px;*/}
+/*li {line-height:18px;}*/			
+.bn-brand-tab-content.active{display:block;}
+.bn-brand-tab-content.hide{display:none;}
+.bn-brand-tab-content {font-family:Museo-500;color:#4f4f4f;font-size:14px;line-height:20px;}
+.bn-brand-tab-content p { margin:0 0 15px; font-size:14px; }
+.bn-brand-tab-content a { color:#dd5271; }
+			
+
+
+/* Category Page ========================================================================= */
+.category-title { margin:0 0 7px; }
+.category-title h1 { padding:3px 0; color:#444444; font-size:1.8em; font-weight:bold; line-height:1.25; }
+.category-image { width:100%; overflow:hidden; margin:0 0 10px; text-align:center; }
+.category-image img { width:100%; }
+.category-description { margin:0 0 10px; }
+.category-products {}
+
+.products-grid p.brand-name {color:#2b3a65;font:17px/20px Museo-500;text-align:center;text-decoration:none;margin:0;padding:0;}
+.products-grid h2.product-name { line-height:15px;  }
+.products-grid h2.product-name a {color:#2b3a65;font:11px/15px Museo-500;text-align:center !important;text-decoration:none;margin:0;padding:0;}
+.products-grid p.sub-desc {color:#9b93c0;font:11px/15px 'Museo-500';text-align:center;text-decoration:none;margin:0;padding:0; min-height:35px; }
+/*#home-content-product-container .products-grid p.sub-desc {  }*/
+.products-grid p.old-price {display:none;}
+.products-grid p.special-price span.price-label {display:none;}
+.products-grid p.special-price span.price, .products-grid div.price-box span.regular-price span.price{color:#dd5271;font-family:Museo-300;font-size:20px;margin:0;padding:0;}
+/*div.category-products p.brand-name a:hover {color:#3c528e;}*/
+
+/* View Type:Grid */
+
+div.page-title.category-title {display:none;}
+.products-grid { position:relative; }
+.products-grid.last { border-bottom:0; }
+.products-grid li.item { float:left; width:154px; padding:10px;border:1px solid #efefef; margin:0 12px 12px 0; text-align:center; min-height:276px;}
+.products-grid li.item.last { margin-right:0;}
+.products-grid .product-image { display:block; width:154px; height:154px; /*border:1px solid #ddd; border-width:1px 1px 1px 0;*/ margin:0 0 10px; }
+.products-grid.first .product-image { border-top:0; }
+.products-grid li.last .product-image { border-right:0;margin-right:0px !important; }
+.products-grid .product-name { font-size:12px; margin:0 0 6px; }
+.products-grid .product-name a { color:#444; text-decoration:underline; }
+.products-grid .product-name a:hover { text-decoration:none; }
+.products-grid .price-box { margin:5px 0; }
+.products-grid .availability { line-height:21px; }
+.products-grid .actions { position:absolute; bottom:20px; }
+.3column-layout .col-main { width:200px; }
+.col2-left-layout .products-grid,
+.col2-right-layout .products-grid { width:740px; margin:0 auto; }
+.col1-layout .products-grid,
+.page-empty .products-grid { width:684px; margin:0 auto; }
+
+.products-grid div.actions {display:none;}
+
+
+/*Checkout*/
+
+/*#discount-coupon-form {display:none;}*/
+div.cart-collaterals div.shipping {display:none;}
+.checkout-onepage-index div.page-title h1 {font-family:'AngelinaRegular';font-size:40px;color:#dd5271;font-weight:bold;}
+
+
+
+/*Hover Box */
+
+div.quicksee-container > div > div { text-align:inherit; display:inline-block; }
+div.quicksee-container .price-box {/*position:relative;float:left;height:30px;width:50%;*/}
+div.quicksee-container .price-box span.regular-price span.price{color:#d4d4d4;font-family:Museo-300;font-size:20px;margin:0;padding:0;text-decoration:line-through;padding-right:5px;}
+div.quicksee-container .price-box span.special-price span.price{color:#dd5271;font-family:Museo-300;font-size:20px;margin:0;padding:0;padding-left:5px;}
+div.quicksee-container p.brand-name {color:#2b3a65;font-family:Museo-500;font-size:17px;text-align:center;text-decoration:none;margin:0;padding:0;}
+div.quicksee-container p.product-name {color:#2b3a65;font-family:Museo-500;font-size:11px;text-align:center !important;text-decoration:none;margin:0;padding:0;}
+div.quicksee-container p.sub-desc {color:#9b93c0;font-family:Museo-500;font-size:11px;text-align:center;text-decoration:none;margin:0;padding:0;}
+
+
+/* new 01152013 */
+.search-box li { background:none; margin:7px 0 0; padding:0; }
+.search-box .form-search { right:0; border:1px solid #9dcd2a; background:none; padding:5px; height:20px; top:0; }
+
+.welcome-mes { float:right;}
+.welcome-mes ul li { margin-right:5px; font-family:Museo-500;font-size:14px;padding:0px 11px 0px 5px;border-right:1px solid #ccc; line-height:20px; color:#9DCD2A;}
+
+
+/* new 01182013 */
+
+/* new 01222013 */
+
+
+.fine-print h3 { float:left; margin:3px 0 0 0;}
+.print-section{float:right;}
+.why-to-buy{font:12px/18px Museo-500; position:relative; float:left; display:block; }
+.why-to-buy span { padding:12px 0 12px 47px; margin-right:6px; display:inline-block; color:#4a5678;}
+.why-to-buy:hover span {color:#9dcd2a;}
+a.title-ingredients span{ background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab_ingredients.gif) no-repeat left center;}
+a.title-ingredients:hover span { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab_ingredients_active.gif) no-repeat left center; }
+.why-to-buy .why-to-buy-tooltip { display:none; position:absolute; width:340px;  height:auto; z-index:100; /*margin-top:12px;*/ border:1px solid #9DCD2A; background:#fff; padding:18px; /*top:50px;*/ margin:10px 0 0 0; right:-10px;}
+.why-to-buy:hover .why-to-buy-tooltip, .why-to-buy:active .why-to-buy-tooltip { display:block; }
+.why-to-buy .why-to-buy-tooltip .tab-container { color:#4f4f4f; font:13px/20px Museo-500;  }
+.why-to-buy .why-to-buy-tooltip .tab-container a { color:#9DCD2A;}
+.why-to-buy .why-to-buy-tooltip .tab-container a:hover { color:#4f4f4f; }
+.why-to-buy .why-to-buy-tooltip .tab-container ul li { color:#4f4f4f; padding:5px 0; }
+a.title-origin span{ background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab_origin.gif) no-repeat left center; }
+a.title-origin:hover span { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab_origin_active.gif) no-repeat left center; }
+a.title-care span{background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab_care.gif) no-repeat left center; }
+a.title-care:hover span{background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tab_care_active.gif) no-repeat left center; }
+
+.why-to-buy .why-to-buy-tooltip h2{color:#2b3a65; font:20px/25px Museo-500; margin:0 0 5px 0;}
+.bn-product-brand-info { margin:35px 0 0; padding:25px 0 0; border-top:1px solid #efefef; /*border-bottom:1px solid #efefef;*/ }
+#upsell-product-table { width:auto; }
+#upsell-product-table li { margin:0 22px 0 0; }
+#upsell-product-table li.last { margin:0; }
+
+.cms-home .main-container { margin:0; }
+
+
+
+/* Blog */
+
+.blog-layout { border-top:1px solid #efefef; padding:30px 0 0; }
+.blog-layout .col-main { width:611px; }
+.blog-layout .col-right.sidebar { width:296px; }
+
+.blog-layout .blog-title h1 { font:bold 58px/65px 'AngelinaRegular'; color:#dd5271; }
+.blog-layout .post-list li.item { padding:0 0 25px; border-bottom:1px solid #efefef; margin:0 0 25px; }
+.blog-layout .post-list li.item img { max-width:100%; height:auto; width:auto\9; border:0; }
+.blog-layout .post-list li.item h2 a, .blog-layout .post-title h1{ font:27px/35px 'Museo-500'; color:#2b3a65; te }
+.blog-layout .post-list li.item h2 a:hover { color:#dd5271; }
+
+.blog-layout .post-list li.item p.post-date { font:12px/18px 'Museo-500'; color:#acacac; }
+.blog-layout .post-list li.item p.post-date a { color:#acacac; }
+.blog-layout .post-list li.item p.post-date a:hover { color:#DD5271; }
+.blog-layout .post-list li.item .post-entry, .blog-layout .post-view .post-entry, .blog-layout .post-view .post-meta { font:12px/20px 'Museo-500'; color:#4f4f4f; }
+.blog-layout .post-list li.item .post-entry img, .blog-layout .post-view .post-entry img { margin:0 0 15px; }
+.blog-layout .post-list li.item .post-entry p, .blog-layout .post-view .post-entry p { margin:0 0 15px; }
+.blog-layout .post-list li.item .post-entry p a, .blog-layout .post-view .post-entry p a { color:#9dcd2a; }
+.blog-layout .post-list li.item .post-entry p a:hover, .blog-layout .post-view .post-entry p a:hover { color:#DD5271; }
+
+.blog-layout .post-list li.item .facebook, .blog-layout .post-list li.item .twitter { float:left; margin:0 5px 0; }
+
+
+.blog-layout .col-right.sidebar .block-content { padding:0; }
+.blog-layout .col-right.sidebar .block-content .welcome_test h2 { font:bold 30px/36px 'AngelinaRegular'; color:#9dcd2a; text-transform:lowercase; }
+.blog-layout .col-right.sidebar .block-content .welcome_test p{ font:12px/20px 'Museo-500'; color:#4f4f4f;  }
+.blog-layout .col-right.sidebar .block-title { padding:0; /*font:bold 30px/36px 'AngelinaRegular'; color:#9dcd2a; text-transform:lowercase;*/ }
+.blog-layout .col-right.sidebar .block-title h2 { font:bold 30px/36px 'AngelinaRegular'; color:#9dcd2a; text-transform:lowercase; }
+.blog-layout .col-right.sidebar .block-content ul li { border:none; }
+.blog-layout .col-right.sidebar .block-content ul li a { font:14px/18px 'Museo-500'; color:#2b3a65; }
+.blog-layout .col-right.sidebar .block-content ul li a:hover { color:#DD5271; }
+
+.blog-layout .col-right.sidebar .block-blog-categories .block-content ul li  { margin:0; }
+.blog-layout .col-right.sidebar .block-blog-categories .block-content ul li a { font:12px/18px 'Museo-500'; color:#4f4f4f; }
+.blog-layout .col-right.sidebar .block-blog-categories .block-content ul li a:hover, .blog-layout .col-right.sidebar .block-blog-categories .block-content ul li:hover , .blog-layout .col-right.sidebar .block-blog-categories .block-content ul li:hover a { color:#DD5271; }
+
+.blog-layout .col-right.sidebar .block-blog-archives .block-content ul li { margin:0;}
+.blog-layout .col-right.sidebar .block-blog-archives .block-content ul li a { font:12px/18px 'Museo-500'; color:#4f4f4f; }
+.blog-layout .col-right.sidebar .block-blog-archives .block-content ul li a:hover { color:#9dcd2a; }
+
+.blog-layout .col-right.sidebar  .block-blog-archives .block-title h2 { color:#9188ba; }
+
+.blog-layout .col-right.sidebar .block-recent-posts { border-top:1px solid #efefef; border-bottom:1px solid #efefef; padding:15px 0 25px; }
+.block-blog-categories { float:left; width:48.5%; }
+.block-blog-archives { float:right; width:48.5%; }
+
+.block-blog-text .social h2, .blog-home .post-list li .social h2 { font:12px/18px 'Museo-700'; color:#2b3a65; text-transform:uppercase; float:left; margin:5px 15px 0 0; }
+.block-blog-text .social ul, .blog-home .post-list li .social ul { float:left; }
+.block-blog-text .social ul li, .blog-home .post-list li .social ul li { display:inline-block; padding:0 3px; }
+
+#upsell-product-table li.item.hover { z-index:10; }
+#upsell-product-table .quicksee-container { z-index:10; }
+
+.blog-layout .post-title { margin:0; }
+.blog-layout .post-view .post-meta { margin:0 0 15px; }
+.blog-layout .post-view .post-meta a { color:#9dcd2a; }
+.blog-layout .post-view .post-meta a:hover { color:#DD5271; }
+
+.blog-layout #comments { margin:25px 0 0; }
+.blog-layout #comments .buttons-set { margin:15px 0 0; padding:0; border:none; text-align:left; }
+.blog-layout #comments .buttons-set button { float:none; margin:0 0 0 90px; }
+.blog-layout #comments h2 { font:normal 15px 'Museo-700'; color:#9188BA; margin:0 0 10px; }
+.blog-layout #comments .comment-list { margin:0 0 30px; }
+.blog-layout #comments .comment-list .gravatar { float:left; width:70px; }
+.blog-layout #comments .comment-list .comment-meta { float:left; width:88%; font:12px/20px 'Museo-500'; }
+.blog-layout #comments .comment-list .comment-meta a { color:#9DCD2A; }
+.blog-layout #comments .comment-list .comment-meta a:hover { color:#dd5271; }
+.blog-layout #comments .comment-list li { margin:0 0 15px;}
+
+.wordpress-post-category-view .blog-layout .page-title h1, .wordpress-archive-view .blog-layout .page-title h1, .wordpress-author-view .blog-layout .page-title h1{ font:bold 40px/50px 'AngelinaRegular'; color:#dd5271; }
+
+.blog-layout .post-view .post-meta .post-skips { display:block; margin:10px 0 0; } 
+.blog-layout .post-view .post-meta .post-skip-previous { float:left; }
+.blog-layout .post-view .post-meta .post-skip-next { float:right; }
+.blog-layout .comment-count span { color:#2b3a65; }
+
+.blog-layout .pager { border:none; margin:0; padding:0; }
+.blog-layout .form-list .field { float:none; width:auto;  }
+.blog-layout .form-list label { width:90px; }
+.blog-layout .form-list .fields { margin:0; }
+.blog-layout .form-list .fields .field { margin:0 0 10px; }
+.blog-layout .form-list .input-box { clear:right; float:left; }
+
+
+
+/* quick find */
+.quick-find { background:#9dcd2a; padding:10px; }
+.quick-find .block-title { font:20px/22px 'Museo-300'; color:#fff; padding:0; float:left; margin:0 8px 0 0; }
+.quick-find .block-title strong { font-style:normal; }
+/*.quick-find .block-content { float:left; } 
+.block-layered-nav .quick-find dd li { margin:0;  }*/
+.quick-find .block-content { float:left; }
+.block-layered-nav .quick-find dd { border:0; padding:0; }
+.quick-find #narrow-by-list ul > li { float:left; padding:0 2px; width:138px; }
+.quick-find #narrow-by-list ul li ol li { margin:0; } 
+.quick-find #narrow-by-list ul > li select { width:138px; font:11px/18px 'Museo-500'; height:22px; color:#2b3a65; background:#fff; border:none; padding:3px;}
+.quick-find #narrow-by-list ul > li select option { padding:4px 8px; }
+.quick-find .sort-by { float:right; }
+.quick-find .sort-by label { color:#fff; }
+.quick-find .sort-by select { width:95px; font:11px/18px 'Museo-500'; height:22px; color:#2b3a65; background:#fff; border:none; padding:3px; } 
+
+.filter-sec { background:#9188ba; padding:10px; margin:15px 0; }
+.filter-sec .block-subtitle { font:15px/18px 'Museo-700'; color:#fff; text-transform:lowercase; padding:0; margin:0 0 5px; border:none; }
+.block-layered-nav .filter-sec .currently li { padding:5px 0 !important; font:13px/18px 'Museo-500'; color:#fff; }
+.block-layered-nav .filter-sec .currently li a { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/btn_remove.png) no-repeat center center; /*display:inline-block;*/ padding:0 12px; width:12px; height:12px; }
+.block-layered-nav .filter-sec .currently li a img { display:none; }
+.block-layered-nav .filter-sec .actions { border-top:1px dotted #fff; padding:5px 0; margin:5px 0 0;  }
+.block-layered-nav .filter-sec .actions a { font:13px/18px 'Museo-500'; color:#fff; }
+
+.customer-account-forgotpassword .fieldset h2 { margin:0; }
+
+/* gift pop */
+.popup h4 { font:14px/18px 'Museo-700'; color:#dd5271; margin:0 0 10px; }
+.popup form h4 { margin:15px 0 10px; }
+.popup form label{ font:13px/18px 'Museo-500';  margin:0 0 3px; }
+.popup form input { border:1px solid #efefef; padding:5px; }
+
+/* product gift */
+.gift-card-info { margin:0 0 20px;} 
+
+/* account */
+
+.account-left-layout .page-title, .authnet-customer-profiles .page-title, .category-description .page-title{ background:#9188ba; padding:10px; width:auto; }
+.account-left-layout .page-title h1, .authnet-customer-profiles .page-title h1, .category-description .page-title h1{ color:#fff; font:15px 'Museo-700'; text-transform:uppercase; }
+.account-left-layout .col-main { width:100%; }
+.account-left-layout #sidebar-nav { display:none; }
+.account-left-layout .form-list .fields{ margin:0; }
+.account-left-layout .form-list .field{ float:none; width:auto; margin:0 0 10px; }
+.account-left-layout .form-list label{ width:125px; }
+.account-left-layout .form-list .input-box{ float:left; clear:right; }
+.account-left-layout .form-list li strong { font-weight:normal; }
+
+.enter-gift-card-number .input-box1 { margin:0 0 10px; }
+.enter-gift-card-number .input-box1 .input-field { float:left; }
+.enter-gift-card-number p span { }
+.enter-gift-card-number p { overflow:visible; width:auto; border:0; padding:0; margin:0; background:transparent; cursor:pointer; }
+.enter-gift-card-number p span{ float:left; height:28px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_btn.png) 0 0 no-repeat; padding:0 0 0 6px;font-family:Museo-500;font-size:15px;line-height:28px; text-align:center; white-space:nowrap; color:#fff; /*text-shadow:0px 1px #ce6000 !important;*/text-transform:lowercase; /*font-weight:normal;*/ font-style:normal; }
+.enter-gift-card-number p:hover span { background-position:bottom left; }
+.enter-gift-card-number p span span { background-position:100% 0; padding:0 15px 0 9px; }
+.enter-gift-card-number p:hover span span { background-position:bottom right; }
+.enter-gift-card-number p span span input { background:none; border:none; font-family:Museo-500;font-size:15px;line-height:28px; color:#fff; cursor:pointer; font-style:normal;  }
+
+.wishlist-formlist select { padding:4px;}
+
+.order-history.first { float:left; width:48.5%; margin:0 0 30px;}
+.order-history.last { float:right; width:48.5%; margin:0 0 30px; clear:right; }
+.order-history ul li { margin:0 0 10px; font:13px/20px 'Museo-500'; }
+.order-history ul li.order-id { font:15px/20px 'Museo-500'; color:#9188BA; }
+.order-history ul li span { display:block; font:13px/20px 'Museo-500'; color:#9DCD2A; }
+.order-history ul li span.price { display:inline-block; color:#808080; padding:0 5px 0 0; }
+
+.account-left-layout .addresses-list { border-top:1px solid #efefef; padding:20px 0 0; margin:30px 0 0; }
+.account-left-layout .addresses-list h3 { font-size:15px; color:#9188BA; font-weight:normal; margin:0 0 5px; line-height:1.35; }
+.account-left-layout .addresses-list li.item { padding:0; margin:0 0 10px;  }
+.account-left-layout .addresses-list a { text-transform:lowercase; font-weight:normal;}
+
+.my-account .form-list .field.city, .my-account .form-list .field.city, .my-account .form-list .field.country, .my-account .form-list .field.state, .my-account .form-list .field.state, .my-account .form-list .field.city { margin:0; }
+
+/* checkout */
+.checkout-left-layout .col-main { float:none; width:100%; margin:20px 0 0;}
+.checkout-left-layout .opc .buttons-set { width:385px; border:none; padding:0; margin:0; }
+.checkout-left-layout .opc #checkout-step-login .col2-set { margin:0 0 30px; }
+#checkoutSteps .form-list .field{ float:none; width:auto; margin:0 0 10px; }
+#checkoutSteps .form-list .field.name-lastname, #checkoutSteps .form-list .field.email, #checkoutSteps .form-list .field.state, #checkoutSteps .form-list .field.country, #checkoutSteps .form-list .field.telephone  { margin:0; }
+#checkoutSteps .form-list label{ width:125px; }
+#checkoutSteps .form-list .input-box{ float:left; clear:right; }
+
+/*= 02072013 =*/
+.access .head-cart { position:relative; padding-left:5px; }
+.access .head-cart li a { color:#2B3A65; }
+.access .head-cart li a:hover { color:#9DCD2A; }
+.access .head-cart .mini-cart { position:absolute; display:none; z-index:50; text-align:left; background:#fff; font-size:12px; -moz-box-shadow:0 0 5px #f5f5f5; -webkit-box-shadow:0 0 5px #f5f5f5; box-shadow:0 0 5px #f5f5f5; border:1px solid #9dcd2a; color:#626262; width:250px; margin-top:3px; right:0; }
+.access .head-cart .mini-cart .block-cart { margin-bottom:0px; }
+.access .head-cart .mini-cart .block-cart .subtotal { background:#fff; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; margin:5px auto auto; width:176px; }
+.access .head-cart .block-cart .summary { margin:-12px -15px 10px; background:#9188BA; color:#fff; }
+.access .head-cart .block-cart .subtotal { color:#626262; }
+.access .head-cart .mini-cart .block .block-subtitle { font-family:'Museo-700'; font-size:13px; text-transform:capitalize; }
+.access .head-cart li a.btn-edit { text-transform:lowercase; color:#9DCD2A; }
+.access .head-cart .amount a{ color:#fff; font-family:'Museo-700'; font-weight:normal; text-decoration:underline; }
+.access .head-cart .block .block-content li.item { margin-bottom:10px; padding-bottom:10px; }
+.access .head-cart .block .block-content li.item.last { margin-bottom:0; padding-bottom:0; }
+.access .head-cart .block-cart .subtotal .price { color:#DD5271; font-family:'Museo-700'; font-weight:normal; }
+.access .head-cart .block-cart .product-details .product-name { font-size:12px; line-height:15px; }
+.access .head-cart .block-cart .product-details span.price { color:#DD5271; }
+
+.contact-sec .sub-head { margin:30px 0 16px; background:#9188ba; padding:10px; width:auto;  }
+.contact-sec .sub-head h2 { color:#fff; font:15px 'Museo-700'; text-transform:uppercase; }
+.contact-sec p {font-weight:normal; /*font-size:16px;*/}
+.contact-sec .info-baby{color:#7980BE;/* margin-left:15px;*/}
+.contact-sec .field{width:auto;}
+.contact-sec .form-list li.wide textarea{width:348px;}
+.contact-sec .fieldset.contact-form {width:350px; padding:20px; border:#efefef 1px solid; margin:10px 0 0 0;}
+.contact-sec .form-list .field{float:none;}
+.contact-sec .form-list li input.input-text{float:right;}
+.contact-sec .field label{color:#7980be; margin-top:6px;}
+.contact-sec .wide label{color:#7980be;}
+.contact-sec p.info-baby a { color:#7A80BE; }
+.contact-sec p.info-baby a:hover { color:#9DCD2A; }
+.contact-sec .or{color:#9DCD2A; /*margin-left:15px;*/ display:block;}
+
+#checkoutSteps #checkout-payment-method-load label { width:150px; }
+
+.order-reviewtab ul li { margin:0 0 10px; font:13px/20px 'Museo-500'; }
+.order-reviewtab ul li .block-content { font-size:13px; line-height:20px; }
+.order-reviewtab ul li.order-id { font:15px/20px 'Museo-500'; color:#9188BA; }
+.order-reviewtab ul li span { display:block; font:13px/20px 'Museo-500'; color:#9DCD2A; }
+.order-reviewtab ul li span.price { display:inline-block; color:#808080; padding:0 5px 0 0; }
+
+.checkout-onepage-success h2 { font:15px/20px 'Museo-700'; }
+.account-ship { color:#9DCD2A; } 
+
+/* new 02122013 */
+
+.account-short-info { float:left; width:755px; margin:26px 0 0 20px; }
+.account-short-info p { font-size:14px; }
+.add-new-info, .myvital-text { float:left; }
+.recipent-add-new { float:left; width:285px; margin:114px 0 0 20px; font-style:italic; }
+.my-vital-additional { float:left; width:565px; margin:10px 0 0 20px; font-style:italic; }
+
+.retrieve-gift-card-balance { margin:15px 0 0; }
+.retrieve-gift-card-balance h4 { color:#9188BA; font:15px/1.25 'Museo-500'; margin:0 0 10px; }
+.retrieve-gift-card-balance p {  margin:0 0 5px;  color:#EB340A; font-size:11px; line-height:13px; }			
+.retrieve-gift-card-balance p strong { font-family:'Museo-700'; font-weight:normal;}
+.my-wishlist .data-table th{ color: #FFFFFF; /*font: 15px 'Museo-700'; text-transform: uppercase; padding-left:10px;*/ } 
+#checkout-step-billing #co-billing-form  .form-list label{ /*float: left;*/ font: 13px/18px 'Museo-500'; margin: 0 0 15px; position: relative; z-index: 0; }
+/*#checkoutSteps #checkout-step-billing #co-billing-form  .form-list label{ }*/
+#checkoutSteps #checkout-step-billing #co-billing-form .form-list .wide label.lab-billing{ width:auto; }
+#checkoutSteps #checkout-step-shipping #co-shipping-form .form-list .wide label.lab-billing{ width:auto; }
+.output-address-form .gift-reg{width:385px;}
+.output-address-form .gift-reg .input-box{float:right;}
+
+
+/*=====*/
+li.item button.button { display:inline-block }
+li.item button.button span span, li.item button.btn-checkout span span { padding:0 10px 0 4px; }
+li.item .more-dtl { display:inline-block; }
+
+/* new 02212013 */
+
+.add-to-bag { display:inline-block; width:475px; margin:auto; text-align:center; }
+.add-to-bag button.button { float:none; margin:0; }
+.add-to-bag button span { font:22px/32px Museo-300; height:35px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/bkg_btn-detail.png) no-repeat 0 0; padding:0 0 0 18px; }
+.add-to-bag button span span { background-position:100% 0; padding:0 75px 0 57px; }
+.add-to-bag button:hover span { background-position:bottom left; }
+.add-to-bag button:hover span span { background-position:bottom right; }
+
+/*.black_overlay { height: 100%; left: 0; opacity: 0.95; position: fixed; top: 0; visibility: visible; width: 100%; z-index: 1000; }*/
+.black_overlay{ display: none; position: fixed;  top: 0%;left: 0%; width: 100%; height: 100%; background-color: #fff; z-index:1000; -moz-opacity: 0.95; opacity:.95; filter: alpha(opacity=80); }
+.white_content { display: none;position: absolute; top: -64px; left: 50%; margin-left:-4.7%; /*width: 50%;*/ height: 480px; padding: 0; width:550px; /*border: 1px solid #efefef;background:#fff;*/ z-index:1002; /*overflow: auto; */}
+.detail-popleft { float:left; width:48.5%; }
+.detail-popleft #slideshow > img{ border:1px solid #efefef; max-width:100%; }
+.detail-popright { float:right; width:48.5%; padding-left:15px; }
+.detail-popright h1 { color:#2B3A65; font-size:22px; padding-bottom:10px; font-weight:normal; text-transform:capitalize; }
+.detail-popright .price-box { margin:0; padding:0; }
+.detail-popright .price-box > div { display:inline-block; margin:0 5px 0 0; }
+.detail-popright .price-box span.price { font-size:18px; font-weight:normal; }
+
+
+.detail-popleft .more-views { width: 100%; margin-top:10px; }
+.detail-popleft .more-views h4 { font-weight:normal; }
+.detail-popleft .more-views ul:after { clear:both; display:block; content:""; }
+.detail-popleft .more-views ul li {padding: 0 10px 5px 0; float:left;}
+.detail-popleft .more-views ul li.first { padding-left:0; }
+.detail-popleft .more-views ul li img { border:1px solid #efefef; }
+
+.white_content .tab { float:left; }
+.white_content .tab a { display:inline-block; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tabpop-non-active.png) no-repeat left top; width:95px; height:30px; line-height:31px; text-align:center; font-size:13px; color:#9188BA; margin:0 1px 0 0; }
+.white_content .tab a.active, .white_content .tab a:hover { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tabpop-active.png) no-repeat left top; color:#fff;  }
+
+.tab-content { border:1px solid #efefef; height:448px; overflow-y:auto; padding:15px; background:#fff; }
+.tab-close { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/cart-closesign.jpg) no-repeat left top; width:18px; height:18px; display:inline-block; text-indent:-999em; float:right; margin:9px 0 0; }
+.tab-close:hover { background-position:left bottom; }
+
+
+.white_content .add-to-cart .qty { float:none; margin:5px 0 0; }
+.white_content .add-to-cart .qty label {  font-weight:normal; line-height:30px; color:#808080; }
+.white_content .add-to-cart button { float:none; margin:10px 0 0; }
+
+#light4.tab-content h1 { color:#2B3A65; font-size:22px; padding-bottom:10px; font-weight:normal; text-transform:capitalize; }
+
+.detail-popright .product-options { padding:0; border:none; background:none; } 
+
+
+
+
+.list_tab_content .tab { float:left; }
+.list_tab_content .tab a { display:inline-block; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tabpop-non-active.png) no-repeat left top; width:95px; height:30px; line-height:31px; text-align:center; font-size:13px; color:#9188BA; margin:0 1px 0 0; }
+.list_tab_content .tab a.active, .white_content .tab a:hover { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/tabpop-active.png) no-repeat left top; color:#fff;  }
+
+.tab-content { border:1px solid #efefef; height:448px; overflow-y:auto; padding:15px; background:#fff; }
+.tab-close { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/cart-closesign.jpg) no-repeat left top; width:18px; height:18px; display:inline-block; text-indent:-999em; float:right; margin:9px 0 0; }
+.tab-close:hover { background-position:left bottom; }
+
+
+.list_tab_content .add-to-cart .qty { float:none; margin:5px 0 0; }
+.list_tab_content .add-to-cart .qty label {  font-weight:normal; line-height:30px; color:#808080; }
+.list_tab_content .add-to-cart button { float:none; margin:10px 0 0; }
+
+#light4.tab-content h1 { color:#2B3A65; font-size:22px; padding-bottom:10px; font-weight:normal; text-transform:capitalize; }
+
+.detail-popright .product-options { padding:0; border:none; background:none; }
+
+
+
+
+
+
+
+/*new 01182013 */
+
+#overlay_form{ display: none; position: absolute; border: 1px solid #9DCD2A; /*padding: 35px;*/  background:#fff; width: 620px; /*height: 460px;*/ -webkit-box-shadow: #f5f5f5 0px 0px 5px; -moz-box-shadow: #f5f5f5 0px 0px 5px; box-shadow: #f5f5f5 0px 0px 5px; z-index:1000; padding:15px; left:-330px; top:35px; min-height:575px; }
+#pop{ display: block; /*width: 65px;*/ text-align: center; /*border-radius: 5px;*/ text-decoration: none; margin: 0 auto; }
+
+#overlay_form .page-title h1{ color:#2b3a65; font:14px Museo-700;} 
+#overlay_form .account-login { width:303px; float:left; margin-right:13px; margin-left:14px;}
+#overlay_form .account-create { float:left; width:290px; }
+#overlay_form .col2-set .col-2 { float:none; width:auto; margin-top:15px; }
+#overlay_form .account-login .content { padding:0; }
+#overlay_form .account-login .content h2 { background:none; margin:0; padding:0; }
+#overlay_form  a#close { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/close-icon.png) no-repeat left top; display:block; width:20px; height:20px; text-indent:-999em; right:-11px; top:-11px; position:absolute;}
+#overlay_form .pop-up .form-list li { border:none;}
+#overlay_form .form-list label.required em{color: #EB340A;}
+#overlay_form .buttons-set{margin:0 0 0 0; width:272px;}
+#overlay_form .buttons-set{border:none;}
+#overlay_form .form-list label{font-weight:normal}
+#overlay_form input, select, textarea, button{padding:2px; border:1px solid #efefef; width:254px;}
+#overlay_form p.required{width:265px;}
+#overlay_form .account-login .content h2, #overlay_form .account-create .create-cont h2 { font:14px/20px 'Museo-500'; }
+#overlay_form .form-list .field{padding:0 0 3px 0; width:auto;}
+#overlay_form .fieldset{margin:0; width:auto;}
+#overlay_form .form-list li{margin:0; padding-bottom:5px;}
+#overlay_form .field{margin-top:5px; padding:0px;}
+#overlay_form .error{color:#F00; font-weight:normal; font-size:11px;}
+
+
+.header-container .cms-links.search-box { min-height: 40px; }
+
+/*= 03112013 =*/
+#overlay_form .account-login .content { min-height:100px; }
+#overlay_form .account-login .buttons-set { margin:0px; }
+#overlay_form .col2-set .buttons-set, #overlay_form .account-create .buttons-set { text-align:right; }
+#overlay_form .account-create .buttons-set { margin-bottom:10px; }
+#overlay_form .account-create .buttons-set button.button { float:none; }
+#overlay_form .col2-set .buttons-set a, #overlay_form .col2-set .buttons-set button { float:none !important; margin-left:0px; }
+#overlay_form .col2-set .buttons-set a { display:inline-block; font-size:12px; }
+#overlay_form .col2-set .buttons-set button { margin:20px 0 10px 70px; }
+#overlay_form .col2-set .required, #overlay_form .account-create .required { text-align:right; }
+
+.blog-home .post-list li .social { float:left; }
+.blog-home .post-list li .comment-count { float:right; margin:2px 0 0 0; }
+
+
+/*= 03132013 =*/
+.block-recent-posts .latest-post-cont{ border-bottom: solid 1px #EFEFEF; margin:0 0 8px;}
+.block-recent-posts h4 { font:normal 14px/22px 'Museo-500'; color:#2B3A65; margin:0 0 2px 0;}
+.block-recent-posts h4  a { color:#2B3A65;}
+.block-recent-posts h4  a:hover {color:#DD5271;}
+.block-recent-posts .view-all { text-align:right; }
+
+.add-to-box ul.add-to-links li { border-right: 1px solid #CCCCCC; float: left; padding: 0 10px 0 0; }
+.product-view .product-shop{ width:550px !important;}
+.new-product-wishlist .add-to-box ul li{ padding:0 7px 0 5px; }
+.new-product-wishlist .add-to-box a{ color: #2B3A65 !important;}
+.new-product-wishlist .add-to-box a:hover{color: #9DCD2A !important;}
+.new-product-wishlist .add-to-box ul li.last{ border:none; }
+.data-table tbody tr.first td{ border-left:1px solid #efefef; }
+.blog-layout .blog-home .social { font: 1px/1.55 'Museo-500';}
+.header-container .access .links li.gift{ border-right:none; }
+/*#commentForm .form-list li{ padding-bottom:22px; }*/
+#preview { position:absolute; border:1px solid #000; background:#333; padding:10px; font-size: 12px; text-align: center; width: 300px; display:none; color:#fff; z-index: 10; }
+
+
+/* Fancybox Image Gallery */
+
+div#fancy_overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none; z-index: 90; }
+div#fancy_loading { position: absolute; height: 40px; width: 40px; cursor: pointer; display: none; overflow: hidden; background: transparent; z-index: 100; }
+div#fancy_loading div { position: absolute; top: 0; left: 0; width: 40px; height: 480px; background: transparent url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/fancybox/fancy_progress.png') no-repeat; }
+div#fancy_outer { position: absolute; top: 0; left: 0; z-index: 90; padding: 20px 20px 40px 20px; margin: 0; background: transparent; display: none; }
+div#fancy_inner { position: relative; width:100%; height:100%; background: #FFF; }
+div#fancy_content { margin: 0; z-index: 100; position: absolute; }
+div#fancy_div { background: #000; color: #FFF; height: 100%; width: 100%; z-index: 100; }
+img#fancy_img { position: absolute; top: 0; left: 0; border:0; padding: 0; margin: 0; z-index: 100; width: 100%; height: 100%; }
+div#fancy_close { position: absolute; top: -12px; right: -15px; height: 30px; width: 30px; background: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/fancybox/fancy_closebox.png') top left no-repeat; cursor: pointer; z-index: 181; display: none; }
+#fancy_frame { position: relative; width: 100%; height: 100%; display: none; }
+#fancy_ajax { width: 100%; height: 100%; overflow: auto; }
+a#fancy_left, a#fancy_right { position: absolute; bottom: 0px; height: 100%; width: 35%; cursor: pointer; z-index: 111; display: none; background-image: url("http://www.babynaturals.com/skin/frontend/default/babynaturals/css/data:image/gif;base64,AAAA"); outline: none; overflow: hidden; }
+a#fancy_left { left: 0px; }
+a#fancy_right { right: 0px; }
+span.fancy_ico { position: absolute; top: 50%; margin-top: -15px; width: 30px; height: 30px; z-index: 112; cursor: pointer; display: block; }
+span#fancy_left_ico { left: -9999px; background: transparent url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/fancybox/fancy_left.png') no-repeat; }
+span#fancy_right_ico { right: -9999px; background: transparent url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/fancybox/fancy_right.png') no-repeat; }
+a#fancy_left:hover, a#fancy_right:hover { visibility: visible; background-color: transparent; }
+a#fancy_left:hover span { left: 20px; }
+a#fancy_right:hover span { right: 20px; }
+#fancy_bigIframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; }
+div#fancy_bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 70; border: 0; padding: 0; margin: 0; }
+div.fancy_bg { position: absolute; display: block; z-index: 70; border: 0; padding: 0; margin: 0; }
+div#fancy_bg_n { top: -20px; left: 0; width: 100%; height: 20px; background: transparent url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/fancybox/fancy_shadow_n.png') repeat-x; }
+div#fancy_bg_ne { top: -20px; right: -20px; width: 20px; height: 20px; background: transparent url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/fancybox/fancy_shadow_ne.png') no-repeat; }
+div#fancy_bg_e { right: -20px; height: 100%; width: 20px; background: transparent url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/fancybox/fancy_shadow_e.png') repeat-y; }
+div#fancy_bg_se { bottom: -20px; right: -20px; width: 20px; height: 20px; background: transparent url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/fancybox/fancy_shadow_se.png') no-repeat; }
+div#fancy_bg_s { bottom: -20px; left: 0; width: 100%; height: 20px; background: transparent url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/fancybox/fancy_shadow_s.png') repeat-x; }
+div#fancy_bg_sw { bottom: -20px; left: -20px; width: 20px; height: 20px; background: transparent url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/fancybox/fancy_shadow_sw.png') no-repeat; }
+div#fancy_bg_w { left: -20px; height: 100%; width: 20px; background: transparent url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/fancybox/fancy_shadow_w.png') repeat-y; }
+div#fancy_bg_nw { top: -20px; left: -20px; width: 20px; height: 20px; background: transparent url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/fancybox/fancy_shadow_nw.png') no-repeat; }
+div#fancy_title { position: absolute; z-index: 100; display: none; }
+div#fancy_title div { color: #FFF; font: bold 12px Arial; padding-bottom: 3px; white-space: nowrap; }
+div#fancy_title table { margin: 0 auto; }
+div#fancy_title table td { padding: 0; vertical-align: middle; }
+td#fancy_title_left { height: 32px; width: 15px; background: transparent url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/fancybox/fancy_title_left.png') repeat-x; }
+td#fancy_title_main { height: 32px; background: transparent url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/fancybox/fancy_title_main.png') repeat-x; }
+td#fancy_title_right { height: 32px; width: 15px; background: transparent url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/fancybox/fancy_title_right.png') repeat-x; }
+.pop { position: absolute; display: inline; }
+.pop .pop_menu { display: none; -moz-border-radius: 3px; -webkit-border-radius: 3px; z-index: 80; }
+.pop .pop_toggle { background-image: url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/cart/arrow_down.png); background-repeat: no-repeat; background-position: center center; width: 20px; height: 20px; overflow: hidden; cursor: pointer; }
+.active .pop_menu { display: block; background-color: #ebebeb; color: #fff; position: absolute; padding: .6em; width: 12em; z-index: 80; }
+.active .pop_menu a { color: #fff; }
+.active .pop_toggle { z-index: 2000; position: absolute; top: 0; left: 0; background-image: url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/cart/arrow_up.png); }
+/* Easy Slider */
+#slider-wrapper { float: left; position: relative; width: 675px !important;  }
+#slider ul, #slider li,  #slider2 ul, #slider2 li { margin:0; padding:0; list-style:none; }
+#slider { width: 674px; height: 328px; }
+#slider2 { margin-top:1em; }
+#slider li, #slider2 li { width: 674px; height: 328px; overflow:hidden; }
+#prevBtn, #nextBtn,  #slider1next, #slider1prev { display:block; width:30px; height:77px; position:absolute; left:-30px; top:71px; z-index:1000; }
+#nextBtn, #slider1next { left:696px; }
+#prevBtn a, #nextBtn a,  #slider1next a, #slider1prev a { display:block; position:relative; width:30px; height:77px; background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/slider/btn_prev.gif) no-repeat 0 0; }
+#nextBtn a, #slider1next a { background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/slider/btn_next.gif) no-repeat 0 0; }
+/* numeric controls */	
+
+	ol#controls { margin:1em 0; padding:0; height:20px; position: absolute; right: 10px; top: 10px; }
+ol#controls li { margin:0 5px 0 0; padding:0; font-size: 12px; float:left; list-style:none; height:20px; line-height:20px;}
+ol#controls li a { float:left; height:20px; line-height:20px; color:#999999; background: #000; padding:1px 7px; text-decoration:none; }
+ol#controls li.current a { background: #000; font-weight: bold; color:#fff; }
+ol#controls li a:focus, #prevBtn a:focus, #nextBtn a:focus { outline:none; }
+/* // Easy Slider */
+
+/* Cycle */
+#controls { z-index: 50; position: absolute; top: 15px; right: 15px; }
+#controls a {background: #000;  margin: 0 5px; padding: 5px 8px; text-decoration: none;color:#999999; }
+#controls a.activeSlide {background: #000; font-weight: bold; color:#fff; }
+#controls a:focus { outline: none; }
+
+#slider li span.comment {
+	color:#FFFFFF;
+  	float:left;
+	position:relative;
+	top:-60px;
+    font-size: 15px;
+	text-align: right;
+	width: 654px;
+ 	padding-right: 20px;
+  	background: #000;
+    line-height: 60px;
+    height: 60px;
+}
+/* //Cycle */
+
+
+/**
+ * This <div> element is wrapped by jCarousel around the list
+ * and has the classname "jcarousel-container".
+ */
+.jcarousel-container { position: relative; }
+.jcarousel-clip { z-index: 2; padding: 0; margin: 0; overflow: hidden; position: relative; }
+.jcarousel-list { z-index: 1; overflow: hidden; position: relative; top: 0; left: 0; margin: 0; padding: 0; }
+.jcarousel-list li, .jcarousel-item { float: left; list-style: none; /* We set the width/height explicitly. No width/height causes infinite loops. */
+    width: 150px; height: 150px; border: 1px solid #cdcdcd; }
+.jcarousel-list li:hover, .jcarousel-item:hover { border: 1px solid #a9a9a9; }
+/**
+	jCarousel - Product Image Slider
+	
+*/
+.jcarousel-next { z-index: 3; display: none; }
+.jcarousel-prev { z-index: 3; display: none; }
+.jcarousel-skin-tango .jcarousel-container { float: left;background: #f4f4f4 url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/background/featured_product_bg.gif) repeat-x; }
+.jcarousel-skin-tango .jcarousel-container-horizontal { width: 598px; padding: 15px 38px; -moz-border-radius: 10px; -webkit-border-radius: 10px; }
+.jcarousel-skin-tango .jcarousel-container-vertical { width: 75px; height: 245px; padding: 40px 20px; }
+.jcarousel-skin-tango .jcarousel-clip-horizontal { width:  598px; height: 108px; }
+.jcarousel-skin-tango .jcarousel-clip-vertical { width:  75px; height: 245px; }
+.jcarousel-skin-tango .jcarousel-item { width: 105px; height: 105px; }
+.jcarousel-skin-tango .jcarousel-item-horizontal { margin-right: 15px; }
+.jcarousel-skin-tango .jcarousel-item-vertical { margin-bottom: 15px; }
+.jcarousel-skin-tango .jcarousel-item-placeholder { background: #fff; color: #000; }
+/**
+ *  Horizontal Buttons
+ */
+.jcarousel-skin-tango .jcarousel-next-horizontal { position: absolute; top: 60px; right: 8px; width: 27px; height: 27px; cursor: pointer; background: transparent url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/buttons/next-horizontal.png) no-repeat 0 0; }
+.jcarousel-skin-tango .jcarousel-next-horizontal:hover { background-position: -27px 0; }
+.jcarousel-skin-tango .jcarousel-next-horizontal:active { background-position: -27px 0; }
+.jcarousel-skin-tango .jcarousel-next-disabled-horizontal, .jcarousel-skin-tango .jcarousel-next-disabled-horizontal:hover, .jcarousel-skin-tango .jcarousel-next-disabled-horizontal:active { cursor: default; background-position: -54px 0; }
+.jcarousel-skin-tango .jcarousel-prev-horizontal { position: absolute; top: 60px; left: 8px; width: 27px; height: 27px; cursor: pointer; background: transparent url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/buttons/prev-horizontal.png) no-repeat 0 0; }
+.jcarousel-skin-tango .jcarousel-prev-horizontal:hover { background-position: -27px 0; }
+.jcarousel-skin-tango .jcarousel-prev-horizontal:active { background-position: -27px 0; }
+.jcarousel-skin-tango .jcarousel-prev-disabled-horizontal, .jcarousel-skin-tango .jcarousel-prev-disabled-horizontal:hover, .jcarousel-skin-tango .jcarousel-prev-disabled-horizontal:active { cursor: default; background-position: -54px 0; }
+/**
+ *  Vertical Buttons
+ */
+.jcarousel-skin-tango .jcarousel-next-vertical { position: absolute; bottom: 5px; left: 43px; width: 32px; height: 32px; cursor: pointer; background: transparent url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/buttons/next-vertical.png) no-repeat 0 0; }
+.jcarousel-skin-tango .jcarousel-next-vertical:hover { background-position: 0 -32px; }
+.jcarousel-skin-tango .jcarousel-next-vertical:active { background-position: 0 -64px; }
+.jcarousel-skin-tango .jcarousel-next-disabled-vertical, .jcarousel-skin-tango .jcarousel-next-disabled-vertical:hover, .jcarousel-skin-tango .jcarousel-next-disabled-vertical:active { cursor: default; background-position: 0 -96px; }
+.jcarousel-skin-tango .jcarousel-prev-vertical { position: absolute; top: 5px; left: 43px; width: 32px; height: 32px; cursor: pointer; background: transparent url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/buttons/prev-vertical.png) no-repeat 0 0; }
+.jcarousel-skin-tango .jcarousel-prev-vertical:hover { background-position: 0 -32px; }
+.jcarousel-skin-tango .jcarousel-prev-vertical:active { background-position: 0 -64px; }
+.jcarousel-skin-tango .jcarousel-prev-disabled-vertical, .jcarousel-skin-tango .jcarousel-prev-disabled-vertical:hover, .jcarousel-skin-tango .jcarousel-prev-disabled-vertical:active { cursor: default; background-position: 0 -96px; }
+
+/* CSS Document */
+
+
+
+div.amshopby-column {
+    float:left; width:83px;
+}
+
+select.amshopby-select {
+    width:170px;
+}
+
+.amshopby-logo{
+padding: 0pt 10px 10px 0pt; float: left;
+}
+
+.amshopby-featured {
+    padding: 5px 5px 5px 5px; 
+}
+
+.amshopby-link{
+    float:left;
+    padding-left:5px; 
+    padding-top:5px;
+}
+
+.amshopby-clearer {
+	display:block; 
+	clear:both; 
+	overflow: hidden;
+}
+div.block-layered-nav dd a {/*padding:0px 5px 0px 0px;*/ display:block; /*float: left;*/}  
+div.block-layered-nav dd a.amshopby-attr {padding-left:15px; background:transparent url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/amshopby-cb1.gif) no-repeat left center;} 
+div.block-layered-nav dd a.amshopby-attr-selected {font-weight: bold; padding-left:15px; background:transparent url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/amshopby-cb2.gif) no-repeat left center;} 
+div.block-layered-nav dd a img {padding: 0px 4px 5px; float:left;} 
+
+div.block-layered-nav dd li.amshopby-cat-level-1 { font:bold 32px/40px 'AngelinaRegular'; color:#dd5271; padding:0 10px; margin:0 0 10px; }
+div.block-layered-nav dd li.amshopby-cat-level-2 {/*padding-left:10px;*/ font:17px/20px 'Museo-500'; color:#2b3a65; /*border-bottom:1px solid #efefef;*/ border-top:1px solid #efefef; padding:10px 0 0 8px; margin:10px 0 5px;}
+div.block-layered-nav dd li.amshopby-cat-level-3 {/*padding-left:20px;*/ font:12px/20px 'Museo-500'; color:#2b3a65; padding:0 0 0 15px; margin:0; }
+
+div.block-layered-nav dd a.amshopby-cat-selected {font-weight: bold;
+color:black; text-decoration: none; cursor:text;}
+
+
+div.block-layered-nav dd li span.amshopby-plusminus {float:left;
+display:block; width:15px; height:15px; cursor:pointer;
+background:transparent url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/amshopby-plus.gif)  no-repeat;}
+div.block-layered-nav dd li span.minus {background:transparent
+url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/amshopby-minus.gif) no-repeat;}
+div.block-layered-nav dd li:after {display:block; content:".";
+clear:both; font-size:0; line-height:0; height:0; overflow:hidden; }
+
+
+
+div.block-layered-nav dt {
+ cursor:pointer; 
+ padding:0;
+ background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/amshopby-expanded.gif) center left no-repeat;
+}
+div.block-layered-nav dt.amshopby-collapsed {background:url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/amshopby-collapsed.gif) center left no-repeat}
+
+
+div.block-layered-nav div.amshopby-slider {
+	 position:relative; margin:10px auto 5px auto; z-index:9; height:18px;  background: url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/amshopby-slider-bg.gif) no-repeat 50% 50%; cursor:pointer;
+}
+div.block-layered-nav div.amshopby-slider div.handle {width:8px; top:3px; height:14px; background: transparent url(http://www.babynaturals.com/skin/frontend/default/babynaturals/images/amshopby-hadle.png) no-repeat; position: absolute; cursor:move; z-index: 2;}
+
+/*
+ * Slider labels
+ */
+.amshopby-slider-price {
+	color: #798794;
+}
+.amshopby-slider-price-from {
+	float: left;
+    
+}
+.amshopby-slider-price-to {
+	float: right;
+}
+
+.amshopby-slider-handle-right {
+	position: absolute;
+	top: 14px;
+	right: 0px;
+}
+
+.amshopby-slider-handle-left {
+	position: absolute;
+	top: 14px;
+	left: 0px;
+}
+
+.amshopby-tooltip {
+    padding:2px 5px;
+    background:#FEC;
+    border:1px solid #FAA819;
+    color:#1F5070;
+    text-align:left;
+    width:200px;
+    position:absolute;
+}
+
+.amshopby-slider-price-range 
+{
+	text-align: center;
+	font-size: 0.9em;
+}
+
+.amshopby-tooltip-img {
+    cursor:help;
+}
+
+div.block-layered-nav, div.amshopby-page-container, div.amshopby-filters-top {
+    position: relative;
+}
+div.amshopby-overlay {
+    background-color: #FFFFFF;
+    height: 100%;
+    left: 0;
+    opacity: 0.5;
+    filter: alpha(opacity = 50);
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 555;
+}
+div.amshopby-overlay img {
+    top: 100px;
+    left: 45%;
+    display: block;
+    position: absolute;
+}
+
+div.amshopby-overlay div {
+    margin: 0 auto;
+    display: block;
+	width: 300px;
+	height: 200px;
+	background:  url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/amshopby-overlay.gif') 50% 50% no-repeat;
+}
+
+/*
+ * Advanced Categories
+ */
+.amshopby-advanced li {
+	clear: both;
+}
+.amshopby-advanced li.level1 {
+	padding-left: 20px;
+}
+.amshopby-advanced li.level2 {
+	padding-left: 30px;
+}
+.amshopby-advanced li.level3 {
+	padding-left: 40px;
+}
+.amshopby-advanced li.level4 {
+	padding-left: 50px;
+}
+
+
+.amshopby-advanced li.active > a {
+	font-weight: bold;
+}
+
+/*
+ * Slider Bar
+ */
+.amshopby-slider-bar {
+	position:absolute; 
+	background: #999; 
+	height: 6px; 
+	top: 6px; 
+	z-index: 1;  
+}
+
+/*
+ * Subcategores block
+ */
+.amshopby-subcategory-image {
+	overflow: auto; 
+}
+
+
+.amshopby-filters-left { border:1px solid #efefef; padding:6px; }
+.amshopby-filters-left dd { padding:0; border:none; }
+div.amshopby-filters-left dd a { display:inline; }
+div.block-layered-nav dd li.amshopby-cat-level-1 a { color:#DD5271;}
+div.block-layered-nav dd li.amshopby-cat-level-2 a { color:#2b3a65;  }
+div.block-layered-nav dd li.amshopby-cat-level-2 a:hover { color:#DD5271; }
+div.block-layered-nav dd li.amshopby-cat-level-3 a { color:#2b3a65;  }
+div.block-layered-nav dd li.amshopby-cat-level-3 a:hover { color:#DD5271; }
+div.block-layered-nav dd { }div.block-layered-nav dd li.amshopby-cat.active a { color:#9DCD2A; }
+/*
+ * FancyBox - jQuery Plugin
+ * Simple and fancy lightbox alternative
+ *
+ * Examples and documentation at: http://fancybox.net
+ * 
+ * Copyright (c) 2008 - 2010 Janis Skarnelis
+ * That said, it is hardly a one-person project. Many people have submitted bugs, code, and offered their advice freely. Their support is greatly appreciated.
+ * 
+ * Version: 1.3.4 (11/11/2010)
+ * Requires: jQuery v1.3+
+ *
+ * Dual licensed under the MIT and GPL licenses:
+ *   http://www.opensource.org/licenses/mit-license.php
+ *   http://www.gnu.org/licenses/gpl.html
+ */
+#fancybox-loading {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 40px;
+	height: 40px;
+	margin-top: -20px;
+	margin-left: -20px;
+	cursor: pointer;
+	overflow: hidden;
+	z-index: 1104;
+	display: none;
+}
+
+#fancybox-loading div {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 40px;
+	height: 480px;
+	background-image: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/fancybox.png');
+}
+
+#fancybox-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 1100;
+	display: none;
+}
+
+#fancybox-tmp {
+	padding: 0;
+	margin: 0;
+	border: 0;
+	overflow: auto;
+	display: none;
+}
+
+#fancybox-wrap {
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: 20px;
+	z-index: 1101;
+	outline: none;
+	display: none;
+}
+
+#fancybox-outer {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	background: #fff;
+}
+
+#fancybox-content {
+	width: 0;
+	height: 0;
+	padding: 0;
+	outline: none;
+	position: relative;
+	overflow: hidden;
+	z-index: 1102;
+	border: 0px solid #fff;
+}
+
+#fancybox-hide-sel-frame {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: transparent;
+	z-index: 1101;
+}
+
+#fancybox-close {
+	position: absolute;
+	top: -15px;
+	right: -15px;
+	width: 30px;
+	height: 30px;
+	background: transparent url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/fancybox.png') -40px 0px;
+	cursor: pointer;
+	z-index: 1103;
+	display: none;
+}
+
+#fancybox-error {
+	color: #444;
+	font: normal 12px/20px Arial;
+	padding: 14px;
+	margin: 0;
+}
+
+#fancybox-img {
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	border: none;
+	outline: none;
+	line-height: 0;
+	vertical-align: top;
+}
+
+#fancybox-frame {
+	width: 100%;
+	height: 100%;
+	border: none;
+	display: block;
+}
+
+#fancybox-left, #fancybox-right {
+	position: absolute;
+	bottom: 0px;
+	height: 100%;
+	width: 35%;
+	cursor: pointer;
+	outline: none;
+	background: transparent url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/blank.gif');
+	z-index: 1102;
+	display: none;
+}
+
+#fancybox-left {
+	left: 0px;
+}
+
+#fancybox-right {
+	right: 0px;
+}
+
+#fancybox-left-ico, #fancybox-right-ico {
+	position: absolute;
+	top: 50%;
+	left: -9999px;
+	width: 30px;
+	height: 30px;
+	margin-top: -15px;
+	cursor: pointer;
+	z-index: 1102;
+	display: block;
+}
+
+#fancybox-left-ico {
+	background-image: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/fancybox.png');
+	background-position: -40px -30px;
+}
+
+#fancybox-right-ico {
+	background-image: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/fancybox.png');
+	background-position: -40px -60px;
+}
+
+#fancybox-left:hover, #fancybox-right:hover {
+	visibility: visible; /* IE6 */
+}
+
+#fancybox-left:hover span {
+	left: 20px;
+}
+
+#fancybox-right:hover span {
+	left: auto;
+	right: 20px;
+}
+
+.fancybox-bg {
+	position: absolute;
+	padding: 0;
+	margin: 0;
+	border: 0;
+	width: 20px;
+	height: 20px;
+	z-index: 1001;
+}
+
+#fancybox-bg-n {
+	top: -20px;
+	left: 0;
+	width: 100%;
+	background-image: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/fancybox-x.png');
+}
+
+#fancybox-bg-ne {
+	top: -20px;
+	right: -20px;
+	background-image: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/fancybox.png');
+	background-position: -40px -162px;
+}
+
+#fancybox-bg-e {
+	top: 0;
+	right: -20px;
+	height: 100%;
+	background-image: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/fancybox-y.png');
+	background-position: -20px 0px;
+}
+
+#fancybox-bg-se {
+	bottom: -20px;
+	right: -20px;
+	background-image: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/fancybox.png');
+	background-position: -40px -182px; 
+}
+
+#fancybox-bg-s {
+	bottom: -20px;
+	left: 0;
+	width: 100%;
+	background-image: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/fancybox-x.png');
+	background-position: 0px -20px;
+}
+
+#fancybox-bg-sw {
+	bottom: -20px;
+	left: -20px;
+	background-image: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/fancybox.png');
+	background-position: -40px -142px;
+}
+
+#fancybox-bg-w {
+	top: 0;
+	left: -20px;
+	height: 100%;
+	background-image: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/fancybox-y.png');
+}
+
+#fancybox-bg-nw {
+	top: -20px;
+	left: -20px;
+	background-image: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/fancybox.png');
+	background-position: -40px -122px;
+}
+
+#fancybox-title {
+	font-family: Helvetica;
+	font-size: 12px;
+	z-index: 1102;
+}
+
+.fancybox-title-inside {
+	padding-bottom: 10px;
+	text-align: center;
+	color: #333;
+	background: #fff;
+	position: relative;
+}
+
+.fancybox-title-outside {
+	padding-top: 10px;
+	color: #fff;
+}
+
+.fancybox-title-over {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	color: #FFF;
+	text-align: left;
+}
+
+#fancybox-title-over {
+	padding: 10px;
+	background-image: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/fancy_title_over.png');
+	display: block;
+}
+
+.fancybox-title-float {
+	position: absolute;
+	left: 0;
+	bottom: -20px;
+	height: 32px;
+}
+
+#fancybox-title-float-wrap {
+	border: none;
+	border-collapse: collapse;
+	width: auto;
+}
+
+#fancybox-title-float-wrap td {
+	border: none;
+	white-space: nowrap;
+}
+
+#fancybox-title-float-left {
+	padding: 0 0 0 15px;
+	background: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/fancybox.png') -40px -90px no-repeat;
+}
+
+#fancybox-title-float-main {
+	color: #FFF;
+	line-height: 29px;
+	font-weight: bold;
+	padding: 0 0 3px 0;
+	background: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/fancybox-x.png') 0px -40px;
+}
+
+#fancybox-title-float-right {
+	padding: 0 0 0 15px;
+	background: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/VS/js/fancybox/fancybox.png') -55px -90px no-repeat;
+}
+
+/* IE6 */
+
+.fancybox-ie6 #fancybox-close { background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_close.png', sizingMethod='scale'); }
+
+.fancybox-ie6 #fancybox-left-ico { background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_nav_left.png', sizingMethod='scale'); }
+.fancybox-ie6 #fancybox-right-ico { background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_nav_right.png', sizingMethod='scale'); }
+
+.fancybox-ie6 #fancybox-title-over { background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_title_over.png', sizingMethod='scale'); zoom: 1; }
+.fancybox-ie6 #fancybox-title-float-left { background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_title_left.png', sizingMethod='scale'); }
+.fancybox-ie6 #fancybox-title-float-main { background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_title_main.png', sizingMethod='scale'); }
+.fancybox-ie6 #fancybox-title-float-right { background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_title_right.png', sizingMethod='scale'); }
+
+.fancybox-ie6 #fancybox-bg-w, .fancybox-ie6 #fancybox-bg-e, .fancybox-ie6 #fancybox-left, .fancybox-ie6 #fancybox-right, #fancybox-hide-sel-frame {
+	height: expression(this.parentNode.clientHeight + "px");
+}
+
+#fancybox-loading.fancybox-ie6 {
+	position: absolute; margin-top: 0;
+	top: expression( (-20 + (document.documentElement.clientHeight ? document.documentElement.clientHeight/2 : document.body.clientHeight/2 ) + ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop )) + 'px');
+}
+
+#fancybox-loading.fancybox-ie6 div	{ background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_loading.png', sizingMethod='scale'); }
+
+/* IE6, IE7, IE8 */
+
+.fancybox-ie .fancybox-bg { background: transparent !important; }
+
+.fancybox-ie #fancybox-bg-n { filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_shadow_n.png', sizingMethod='scale'); }
+.fancybox-ie #fancybox-bg-ne { filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_shadow_ne.png', sizingMethod='scale'); }
+.fancybox-ie #fancybox-bg-e { filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_shadow_e.png', sizingMethod='scale'); }
+.fancybox-ie #fancybox-bg-se { filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_shadow_se.png', sizingMethod='scale'); }
+.fancybox-ie #fancybox-bg-s { filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_shadow_s.png', sizingMethod='scale'); }
+.fancybox-ie #fancybox-bg-sw { filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_shadow_sw.png', sizingMethod='scale'); }
+.fancybox-ie #fancybox-bg-w { filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_shadow_w.png', sizingMethod='scale'); }
+.fancybox-ie #fancybox-bg-nw { filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='fancybox/fancy_shadow_nw.png', sizingMethod='scale'); }
+.products-grid li.item, .products-list li.item{position:relative;z-index:1;overflow: visible;}
+.quicksee-container{position:absolute;left:-40px;top:-70px;background:#fff;border:1px solid #9dcd2a;padding:25px;z-index:3;}
+.products-grid li.item.hover, .products-list li.item.hover{z-index:2;}
+
+.bubbleInfo {
+    display: none;
+    width: 0;
+	position: relative;
+	top: 8px;
+	left: -30px;
+}
+
+.popup {
+	position: absolute;
+	display: none;
+	z-index: 50;
+    text-align: left;
+    background: #fff;
+    font-size: 12px;
+   /* -moz-border-radius: 4px; -webkit-border-radius: 4px; -khtml-border-radius: 4px; border-radius: 4px;*/
+    -moz-box-shadow: 0 0 5px #f5f5f5; -webkit-box-shadow: 0 0 5px #f5f5f5; box-shadow: 0 0 5px #f5f5f5;
+    border: 1px solid #9dcd2a;
+    color: #626262 !important;
+    padding: 15px;
+	width:214px;
+}
+
+.popup p {margin-bottom: 7px;}
+.popup #firstname,
+.popup #lastname,
+.popup #registryid {width: 200px;} 
+.popup a {/*font-size: 12px !important; color: #1E7EC8 !important; width: 200px !important;*/ display: block; margin:10px 0 0; font-size:13px; }
+.popup label {width: 200px !important; display: block;}
+
+.shop-access {zoom:1; margin-bottom: 0;}
+.shop-access:after,
+.quick-access ul:after {content: "."; display: block; height: 0; line-height: 0; clear: both; visibility: hidden;}
+.shop-access table {float: right;}
+.quick-access ul {display: block; zoom:1; float: right;}
+.quick-access li {display: block !important; float: left;}
+
+
+#loading-mask {background: #FFF4E9;
+border: 2px solid #F1AF73;
+color: #D85909;
+font-weight: bold;
+left: 50%;
+margin-left: -60px;
+padding: 15px 60px;
+position: fixed;
+text-align: center;
+top: 45%;
+width: 120px;
+z-index: 1000;}
+
+#loading-mask .loader {
+background: #FFF4E9;
+border: 2px solid #F1AF73;
+color: #D85909;
+font-weight: bold;
+left: 50%;
+margin-left: -60px;
+padding: 15px 60px;
+position: fixed;
+text-align: center;
+top: 45%;
+width: 120px;
+z-index: 1000;
+}
+
+.cleditorMain {border:1px solid #999; padding:0 1px 1px; background-color:white}
+.cleditorMain iframe {border:none; margin:0; padding:0}
+.cleditorMain textarea {border:none; height: 150px; width: 100%; margin:0; padding:0; overflow-y:scroll; font:10pt Arial,Verdana; resize:none; outline:none /* webkit grip focus */}
+.cleditorToolbar {background: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/webtex/toolbar.gif') repeat}
+.cleditorGroup {float:left; height:26px}
+.cleditorButton {float:left; width:24px; height:24px; margin:1px 0 1px 0; background: url('http://www.babynaturals.com/skin/frontend/default/babynaturals/images/webtex/buttons.gif')}
+.cleditorDisabled {opacity:0.3; filter:alpha(opacity=30)}
+.cleditorDivider {float:left; width:1px; height:23px; margin:1px 0 1px 0; background:#CCC}
+.cleditorPopup {border:solid 1px #999; background-color:white; position:absolute; font:10pt Arial,Verdana; cursor:default; z-index:0}
+.cleditorList div {padding:2px 4px 2px 4px}
+.cleditorList p,
+.cleditorList h1,
+.cleditorList h2,
+.cleditorList h3,
+.cleditorList h4,
+.cleditorList h5,
+.cleditorList h6,
+.cleditorList font {padding:0; margin:0; background-color:Transparent}
+.cleditorColor {width:150px; padding:1px 0 0 1px}
+.cleditorColor div {float:left; width:14px; height:14px; margin:0 1px 1px 0}
+.cleditorPrompt {background-color:#F6F7F9; padding:4px; font-size:8.5pt}
+.cleditorPrompt input,
+.cleditorPrompt textarea {font:8.5pt Arial,Verdana;}
+.cleditorMsg {background-color:#FDFCEE; width:150px; padding:4px; font-size:8.5pt}

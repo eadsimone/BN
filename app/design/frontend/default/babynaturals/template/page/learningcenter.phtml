@@ -1,0 +1,295 @@
+<?php /* $query = "SELECT research.research_id, research.research_name, research.research_link, research.research_summary, research.research_link FROM research WHERE research.chemical_id = 30";
+	$row = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($query);
+	echo '<pre>';
+	print_r($row); */ ?>
+<?php 
+//echo Mage::helper('core/url')->getCurrentUrl();
+
+
+if(isset($_REQUEST['chemcsid']))
+{
+echo '<h1 class="chemical-name">'.$_REQUEST['chemcsid'].'</h1>';
+} 
+
+?>
+<?php 
+
+
+$chemId = 7;
+if( isset($_GET["id"]) ){ $chemId = $_GET["id"]; }
+
+function getChemicals() {	
+	 
+	$query = "SELECT chemicals.chem_id, chemicals.chem_name FROM chemicals";
+	$row = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($query);
+	
+	foreach($row as $rows) {  
+	   	$chem_id[] = $rows['chem_id'];
+		$chem_name[] = $rows['chem_name'];  		
+	} 
+	  	return array("chem_id"=>$chem_id, "chem_name"=>$chem_name);
+		
+	
+}
+
+function getChemicalByID($chemId)
+{
+
+	$query = "SELECT chemicals.chem_name, chemicals.chem_summary, chemicals.chem_description FROM chemicals WHERE chemicals.chem_id  =".$chemId;
+	 //echo $query;
+	 $row = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($query);
+	
+	 foreach($row as $rows){
+	
+		
+	  	$chem_name = $rows['chem_name'];  
+		$chem_summary = $rows['chem_summary'];
+		$chem_description = $rows['chem_description'];
+	
+	
+	  	return array("chem_name"=>$chem_name, "chem_summary"=>$chem_summary, "chem_description"=>$chem_description);
+	}	
+}
+
+function getResearchIterationCount($chemId) {
+     
+	$query = "SELECT research.research_id FROM research WHERE research.chemical_id=".$chemId;
+	$row = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($query);
+	$thecount = $row->rowCount();
+	return $thecount; 	
+		
+}
+
+?>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Baby Naturals - Learning Center</title>
+<link rel="stylesheet" href="../learning-center/css/styles.css" /> 
+<script>
+jQuery(document).ready(function($) {
+	jQuery('div.nav-container ul li.learning').addClass('active');
+	jQuery('div.nav-container ul li.home').removeClass('active');
+	
+});
+</script>
+<script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+<script type="text/javascript">
+jQuery.noConflict();
+</script>
+
+
+
+<script>
+      jQuery(function() {
+		jQuery('#myResearchNumber #research_1').addClass('active');
+        //jQuery( "#accordion" ).accordion({autoHeight: false, clearStyle: true});
+		 jQuery( "#accordion" ).accordion({autoHeight: false, clearStyle: true, collapsible: true});
+    });
+	function showonlyone(thechosenone) {
+		jQuery('.newboxes').each(function(index) {
+			if (jQuery(this).attr("id") == thechosenone) {
+				var newboxid=jQuery(this).attr("id").replace('newboxes','');
+				var indexid=index+1;
+				if(newboxid==indexid)
+				{
+					jQuery('.research-circles ').removeClass('active');
+					jQuery('#research_'+newboxid+' ').addClass('active');
+				}
+				
+				jQuery(this).show(200);	
+			}
+			else {
+				jQuery(this).hide(600);
+			}
+		});
+	}
+
+
+function ChemicalAjax(id)
+{
+	var cId = id;
+	jQuery.ajax({
+		type: "POST",
+	  	url: "../learning-center/ajax.php",
+	  	data: "chemcsid="+cId,
+	  	success: function(t){
+			var jsonData = JSON.parse(t);
+			var chem_name = jsonData[0].chem_name;
+			var chem_summary = jsonData[0].chem_summary;
+				jQuery(".chem-summary-content").html(chem_summary);
+				jQuery(".chemical-name").html(chem_name);
+				var chem_description = jsonData[0].chem_description;
+				jQuery(".long-discription").html(chem_description);
+				var chem_description = jsonData[0].chem_description;
+				jQuery(".long-discription").html(chem_description);
+				var chemical_id = jsonData[0].chemical_id;
+				jQuery("#myResearchNumber").html('');
+				jQuery("#mynewsbox").html('');
+				var MyCount = '';
+				var MyContent = '';
+				//jQuery(".newboxes").html('');
+				//jQuery(".newboxes").css('display','none');
+				for (var i = 0; i < jsonData[1].length; i++) {
+					MyCount = i+1;
+					MyContent = '';
+					jQuery('#myResearchNumber #research_1').addClass('active');
+					jQuery("#myResearchNumber").append("<div class='research-circles' id='research_"+MyCount+"'><a href='javascript:showonlyone(\"newboxes"+MyCount+"\");' id='myHeader1' class='research-pagination'>"+MyCount+"</a></div>");
+					var research_total=jsonData[1][i].chemical_id.length;
+					//jQuery(".research_total").html(research_total);
+					//jQuery(".research-name"+i).html(research_name);
+					var research_name = jsonData[1][i].research_name;
+					//jQuery(".research-name").html(research_name);
+					var research_link = jsonData[1][i].research_link;
+					//jQuery(".research-link").html(research_link);
+					var research_summary = jsonData[1][i].research_summary;
+					//jQuery(".research-summary").html(research_summary);
+					var research_source = jsonData[1][i].research_source;
+					//jQuery(".research-source").html(research_source);
+					
+					MyContent += '<div id="newboxes'+MyCount+'" style="clear: left;" class="newboxes">';
+					MyContent += '<p class="research-name">'+MyCount+'. '+research_name+'</p>';
+					MyContent += '<p class="research-link"><a target="_blank" class="research-link" href="'+research_link+'">'+research_link+'</a></p>';
+					MyContent += '<p class="research-summary">'+research_summary+'</p>';
+					MyContent += '<p class="research-source">'+research_source+'</p>';
+					MyContent += '</div>';
+					//jQuery("#newboxes"+MyCount).css('display','');
+					jQuery("#mynewsbox").append(MyContent);
+			 	}
+			}
+	});
+	return false;
+}
+	
+</script>
+
+<style type="text/css">
+#newboxes2, #newboxes3, #newboxes4, #newboxes5, #newboxes6, #newboxes7, #newboxes8 {
+	display:none;
+}
+</style>
+</head>
+<body>
+
+<div class="learning-container">
+
+
+<h1 class="lc-heading">Learning Center</h1>
+<p class="intro-text">BabyNaturals mission begins with education.  We partnered with PHds to research and identify the ingredients in baby
+products that may pose a danger to your child's health.  We banned these ingredients to our Naughty List and we don't
+carry a single product that contains these chemicals or substances.  </p>
+
+<p class="intro-text">It's important to us that you understand why we believe certain substances are just not fit for use around your child.  We
+invite our customers and those just browsing to review our approach and to see for themselves why we've chosen to stay
+away from specific chemicals and ingredients.</p>
+<h2 class="naughty-heading">The Naughty List</h2>
+<div class="chemical-instructions">* Click on Item to Read More Information</div>
+<div style="clear:both;"></div>
+<div class="chemical-container">
+<div class="chemical-list">
+<ul>
+
+<li><a href="javascript:void(0);"  onclick="return ChemicalAjax(7);" >2,4, Dichlorophenoxyacetic acid (2,4, D)</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(1);">Alkylphenols</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(2);">Bisphenol A (BPA)</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(3);">Brominated Solvents</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(33);">Ceteareth</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(4);">Chlorinated Solvents</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(5);">Chlorine</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(36);">DEET</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(6);">Di(2-ethylhexyl) phthalate (DEHP)</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(8);">Dioxins</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(34);">DMDM Hydantoin</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(9);">Fluorocarbon solvents</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(10);">Formaldehyde</a></li>
+</ul>
+</div>
+<div class="chemical-list">
+<ul>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(11);">Hexavalent chromium</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(12);">Mineral Oil</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(37);">Octinoxate</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(13);">Organohalides</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(14);">Organophosphate pesticides</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(32);">Oxybenzone</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(15);">Parabens</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(16);">Perchloroethylene (PERC)</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(17);">Petrochemicals (1,4-dioxane)</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(18);">Petroleum distillates</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(19);">Phosphates</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(22);">Phthalates</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(20);">Polybrominated diphenyl ethers</a></li>
+</ul>
+</div>
+<div class="chemical-list last">
+<ul>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(21);">Polyurethane</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(31);">Propylene Glycol</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(23);">PVC (polyvinyl chloride) plastic</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(24);">Sodium Lauryl / Laureth Sulfate</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(25);">Sulfur dioxide</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(26);">Sulfur oxides</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(29);">Talc</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(27);">Trichloroethylene (TCE)</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(28);">Triclosan</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(35);">Triethanolamine (TEA)</a></li>
+<li><a href="javascript:void(0);" onclick="ChemicalAjax(30);">UREA and DEA</a></li>
+</ul>
+</div>
+</div>
+
+<?php $chem_details = getChemicalByID($chemId);
+?>
+<h1 class="chemical-name"><?php echo $chem_details["chem_name"];?></h1>
+<div id="accordion">
+  <h3>Summary</h3>
+  
+  <div class="viewport" style="height:140px !important;">
+    <p class="chem-summary-content"><?php echo $chem_details["chem_summary"];?></p>
+  </div>
+  <h3>Long Description</h3>
+  
+  <div class="viewport">
+    <div class="long-discription"><?php echo $chem_details["chem_description"];?></div>
+  </div>
+  <h3>The Research</h3>
+   
+  <div class="viewport">
+  	<div style="margin-top:15px;margin-left:10px;" id="myResearchNumber">
+  <?php	   
+	  //$iterationCount = getResearchIterationCount($chemId);
+	  $iterationCount = 8;
+
+	  $i=1;
+		while($i<=$iterationCount)
+     	{
+
+	echo "<div class=\"research-circles\"\" id=\"research_$i\"><a class=\"research-pagination\" id=\"myHeader1\" href=\"javascript:showonlyone('newboxes".$i."');\" >".$i."</a></div>"; 
+			$i++;
+		}	
+		  
+	?></div><?php
+	echo '<div id="mynewsbox">';
+	$query = "SELECT research.research_id, research.research_name, research.research_link, research.research_summary, research.research_link FROM research WHERE research.chemical_id =".$chemId;
+	$rows = Mage::getSingleton('core/resource')->getConnection('core_read')->fetchAll($query);
+	//print_r($rows);
+	$i = 1;
+	if($i<= $iterationCount){
+	foreach($rows as $row) {      
+		echo "<div class=\"newboxes\" style=\"clear:left;\" id=\"newboxes".$i."\">";
+		echo "<p class=\"research-name\">".$i.". ".$row['research_name']."</p>";
+		echo "<p class=\"research-link\"><a href=\"".$row['research_link']."\" class=\"research-link\" target=\"_blank\"> ".$row['research_link']."</a></p>";
+		echo "<p class=\"research-summary\">".$row['research_summary']."</p>";
+		echo "<p class=\"research-source\">".$row['research_source']."</p>"; 
+		echo "</div>";			
+		$i++;
+	}	 
+	}
+	?>
+	</div></div>
+
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_modern
+ * @copyright   Copyright (c) 2009 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php include('behavior-class.php'); ?>
+<div class="header-container">
+<div class="header">
+        <?php if ($this->getIsHomePage()):?>
+        <h1 class="logo"><strong><?php echo $this->getLogoAlt() ?></strong><a href="<?php echo $this->getUrl('') ?>" title="<?php echo $this->getLogoAlt() ?>" class="logo"><img src="<?php echo $this->getLogoSrc() ?>" alt="<?php echo $this->getLogoAlt() ?>" /></a></h1>
+        <?php else:?>
+        <a href="<?php echo $this->getUrl('') ?>" title="<?php echo $this->getLogoAlt() ?>" class="logo"><strong><?php echo $this->getLogoAlt() ?></strong><img src="<?php echo $this->getLogoSrc() ?>" alt="<?php echo $this->getLogoAlt() ?>" /></a>
+        <?php endif?>
+    
+    <div class="cms-links search-box">
+    <ul>
+	<li>
+	 <?php echo $this->getChildHtml('topSearch') ?>
+    </li>	 
+    <?php //echo $this->getLayout()->createBlock('cms/block')->setBlockId('toplinks')->toHtml() ?>  <?php echo $this->getChildHtml('store_language') ?>
+    </ul>
+    </div>
+	<?php //echo $this->getChildHtml('mini_login') ?> 
+    <div class="access">
+	   
+  
+<?php /*?> <ul> <li><?php if (Mage::getSingleton('customer/session')->isLoggedIn()==0): ?>
+<a id="pop" href="#"><?php echo $this->__('Sign In') ?></a>
+<div id="overlay_form">
+<?php echo $this->getLayout()->createBlock('customer/form_login')->setTemplate('customer/form/login_pop.phtml')->toHtml(); ?>
+ <a href="#" id="close" >Close</a>
+</div>
+<?php else: ?>
+<a href="<?php echo $this->getUrl('customer/account/logout') ?>"><?php echo $this->__('LogOut') ?></a>
+<?php endif ?></li></ul><?php */?> 
+
+<?php echo $this->getChildHtml('topLinks') ?>
+<?php if($this->helper('customer')->isLoggedIn()): ?>		
+	<div class="welcome-mes">	
+		<ul>
+	   <li>	<?php echo $this->getWelcome()?></li>
+	   </ul>
+	</div>
+<?php endif ?>	
+		  </div>
+	  
+
+
+	
+
+  <?php /*?><li class="mycart"><?php echo $this->getChildHtml('mini-cart')?></li>
+	<div id="nav-container">
+	<!-- NOTE: Make this dynamic later -->
+
+    <?php $home_url = Mage::helper('core/url')->getHomeUrl(); ?>
+    <ul>
+        <li><a href="<?php echo $home_url;?>">Home</a></li>
+        <li><a href="<?php echo $home_url;?>feeding.html">Feeding</a></li>
+        <li><a href="<?php echo $home_url;?>teething.html">Teething</a></li>
+        <li><a href="<?php echo $home_url;?>diapering.html">Diapering</a></li>
+        <li><a href="<?php echo $home_url;?>bath-body.html">Bath & Body</a></li>
+        <li><a href="<?php echo $home_url;?>playing.html">Playing</a></li>
+        <li><a href="<?php echo $home_url;?>clothing.html">Clothing</a></li>
+        <li><a href="<?php echo $home_url;?>cleaning.html">Cleaning</a></li>
+        <li><a href="<?php echo $home_url;?>gear.html">Gear</a></li>
+        <li><a href="<?php echo $home_url;?>blog" class="pink-link">Blog</a></li>
+        <li class="last"><a href="#" class="pink-link">Learning Center</a></li>
+     </ul>   
+	<?php //echo $this->getChildHtml('topMenu') ?>
+       <?php //echo $this->getChildHtml('topSearch') ?>
+    <?php //echo $this->getChildHtml('connect') ?> 
+    <div class="clearfix"></div>
+    </div><?php */?>
+    <?php /* <div class="quick-access">
+        <?php //echo $this->getChildHtml('store_language') ?>
+        <p class="welcome-msg"></p>
+     
+    </div> */?>
+    <?php echo $this->getChildHtml('topBar') ?>
+    <?php //echo $this->getChildHtml('topContainer'); ?>
+</div>  
+</div>
+<?php echo $this->getChildHtml('topMenu') ?>

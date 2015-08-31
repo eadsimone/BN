@@ -1,0 +1,40 @@
+<?php
+/**
+ * @category    Fishpig
+ * @package     Fishpig_Wordpress
+ * @license     http://fishpig.co.uk/license.txt
+ * @author      Ben Tideswell <help@fishpig.co.uk>
+ */
+?>
+<?php $posts = $this->getPosts() ?>
+<?php if (count($posts) > 0) : ?>
+	<div class="home-content-block block block-blog block-recent-posts">
+		<?php if ($title = $this->getTitle()): ?>
+			<h3>Our <span class="pink-text">latest </span>posts</h3>
+		<?php endif; ?>
+		<div class="post-cont">
+			<div id="<?php echo $this->getListId() ?>">
+			<div class="latest-posts">
+				<?php $i= 0; ?>		
+			<?php foreach($posts as $post): $i++; ?>
+			<?php if($i<=2){ 
+			 //print_r($post->getData()); ?>
+			<?php //echo $post->getPostContent(); ?>			
+			<?php //the_post_thumbnail('thumbnail'); ?> 
+			
+			<div class="latest-post-cont">
+				<h4><a href="<?php echo $post->getPermalink() ?>" title="<?php echo $this->htmlEscape($post->getPostTitle()) ?>"><?php echo $this->htmlEscape($post->getPostTitle()) ?></a></h4>
+				<?php $prod=$post->getPostExcerpt() ?>
+<?php //$prod_name= substr($prod, 0, 35); ?>
+<?php $length = 100; //modify for desired width
+$prod_name = preg_replace('/\s+?(\S+)?$/', '', substr($prod, 0, $length))."..."; ?>
+				<?php echo $prod_name; ?>
+				</div>
+			<?php //echo get_the_post_thumbnail($page->ID, 'thumbnail'); ?>
+			<?php } endforeach; ?>
+			<div class="view-all"><a href="<?php Mage::getBaseUrl();?>/blog/">View All</a></div>
+			</div>
+			<script type="text/javascript">decorateList('<?php echo $this->getListId() ?>')</script>
+		</div>
+	</div>
+<?php endif; ?>

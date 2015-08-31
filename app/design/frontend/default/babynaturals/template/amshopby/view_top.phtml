@@ -1,0 +1,38 @@
+<?php $_filters1 = $this->getActiveFilters() ?>
+<?php if($this->canShowBlock()): ?>
+<div class="block block-layered-nav">
+    <div class="quick-find">
+	<div class="block-title">
+        <strong><span><?php echo $this->__('quick find') ?></span></strong>
+    </div>
+    <div class="block-content" style="width:435px">
+       
+        <?php if($this->canShowOptions()): ?>
+            <?php /*<p class="block-subtitle"><?php echo $this->__('Shopping Options') ?></p> */?>
+            <dl id="narrow-by-list">
+                <ul>
+                <?php foreach ($this->getFilters() as $_filter): ?>
+                <?php if($_filter->getItemsCount()): ?>
+                	<?php if ($_filter instanceof Mage_Catalog_Block_Layer_Filter_Category):?>
+                		<li>
+                	<?php else:?>
+                		<li>
+                	<?php endif;?>
+                    <?php /*<dt><?php echo $this->__($_filter->getName()) ?></dt> */?>
+                    <dd style="background:none"><?php echo $_filter->getHtml() ?></dd>
+                </li>
+                <?php endif; ?>
+                <?php endforeach; ?>
+                </ul>
+            </dl>
+            <script type="text/javascript">decorateDataList('narrow-by-list')</script>
+        <?php endif; ?>
+    </div>
+<?php echo $this->getLayout()->CreateBlock('catalog/product_list_toolbar')->setTemplate("catalog/product/list/sortby-custom.phtml")->ToHtml(); ?>
+<div class="clear"></div>	
+	</div>
+	<?php echo $this->getStateHtml() ?>
+</div>
+<?php else: ?>
+<div style="display:none" class="<?php echo $this->getBlockId()?>"></div>
+<?php endif; ?>

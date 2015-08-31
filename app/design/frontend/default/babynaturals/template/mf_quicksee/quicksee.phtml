@@ -1,0 +1,96 @@
+<?php
+    $object = $this->getObject();
+    $quicksee = $object['quicksee'];
+   
+    $product = $object['product'];
+    $processorQuicksee = Mage::getModel('quicksee/filter');
+    $objectFilter = new Varien_Object();
+   
+    $objectFilter->setData('product',$product);
+	$objectFilter->setData('text',$quicksee->getContent());
+
+	$width = Mage::getStoreConfig('quicksee/general/container_width');	
+	$height = Mage::getStoreConfig('quicksee/general/container_height');	
+?>
+
+
+<div class="quicksee-container" style="display:none;<?php if($width):?>width:<?php echo $width; ?>px;<?php endif;?><?php if($height):?>height:<?php echo $height; ?>px;<?php endif;?>">
+	<?php echo $processorQuicksee->filter($objectFilter);?>
+	<div class="more-dtl">
+	
+	 <?php /* <button type="button" title="<?php echo $this->__('More Details') ?>" class="button btn-cart" onclick="qv.a11('<?php echo $product->getSku() ?>')"><span><span><?php echo $this->__('More Details') ?></span></span></button> */ ?>
+	
+	<?php if(Mage::getStoreConfig('ajax/general/enabledpro')){ ?>
+	
+	<button type="button" title="<?php echo $this->__('buy now') ?>" class="button btn-cart" onclick="showOptions('<?php echo $product->getId()?>')"><span><span><?php echo $this->__('buy now') ?></span></span></button>
+								<a href='<?php echo $this->getUrl('ajax/index/options',array('product_id'=>$product->getId()));?>' class='fancybox' id='fancybox<?php echo $product->getId()?>' style='display:none'>Test</a>
+	
+	<?php /*<button type="button" title="<?php echo $this->__('More Details') ?>" class="button btn-cart" onclick="showOptions('<?php echo $product->getId()?>')"><span><span><?php echo $this->__('More Details') ?></span></span></button> */ ?>
+	<?php } ?>
+	
+	</div>
+	
+	
+	
+<div class="clear"></div>
+
+</div>
+
+
+<script type="text/javascript">
+	jQuery.noConflict();
+	jQuery(document).ready(function(){
+		jQuery('.fancybox').fancybox(
+			{
+			   hideOnContentClick : true,
+			   width: 550,
+			   autoDimensions: true,
+               type : 'iframe',
+			   showTitle: false,
+			   scrolling: 'no',
+			   onComplete: function(){
+				jQuery('#fancybox-frame').load(function() { // wait for frame to load and then gets it's height
+					jQuery('#fancybox-content').height(jQuery(this).contents().find('body').height()-25);
+					jQuery.fancybox.resize();
+				 });
+
+			   }
+			}
+		);
+	});
+	function showOptions(id){
+		jQuery('#fancybox'+id).trigger('click');
+	}
+	function setAjaxData(data,iframe){
+		if(data.status == 'ERROR'){
+			alert(data.message);
+		}else{
+			if(jQuery('.block-cart')){
+	            jQuery('.block-cart').replaceWith(data.sidebar);
+	        }
+	        if(jQuery('.header .links')){
+	            jQuery('.header .links').replaceWith(data.toplink);
+	        }
+	        jQuery.fancybox.close();
+			refreshCartBox();
+			initBubble();
+		}
+	}
+	function setLocationAjax(url,id){
+		url += 'isAjax/1';
+		url = url.replace("checkout/cart","ajax/index");
+		jQuery('#ajax_loader'+id).show();
+		try {
+			jQuery.ajax( {
+				url : url,
+				dataType : 'json',
+				success : function(data) {
+					jQuery('#ajax_loader'+id).hide();
+         			setAjaxData(data,false);
+						
+				}
+			});
+		} catch (e) {
+		}
+	}
+</script>

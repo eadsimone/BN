@@ -1,0 +1,121 @@
+<?php
+/**
+ * Webtex
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.webtexsoftware.com/LICENSE.txt
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to info@webtexsoftware.com and we will send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade the extension to newer
+ * versions in the future. If you wish to customize the extension for your
+ * needs please refer to http://www.webtexsoftware.com for more information, 
+ * or contact us through this email: info@webtexsoftware.com.
+ *
+ * @category   design_default
+ * @package    Webtex_GiftRegistry
+ * @copyright  Copyright (c) 2011 Webtex Solutions, LLC (http://www.webtexsoftware.com/)
+ * @license    http://www.webtexsoftware.com/LICENSE.txt End-User License Agreement
+ */
+?>
+
+<?php $beforeText = '
+<div class="bubbleInfo" id="webtexgiftregistrybox">
+    <div style="opacity: 0; top: -50px; left: -33px; display: none;" id="dpop" class="popup">';
+    
+if(!Mage::helper('webtexgiftregistry')->isCustomerLogIn() || !Mage::helper('webtexgiftregistry')->isRegistry()) 
+{ 
+            $beforeText .= '<h4>'.$this->__("Find a Gift Registry").'</h4>
+        <form method="post" action="'. $this->getSearchUrl() .'">
+            <p>
+                <label for="firstname">'.$this->__('First Name').':</label>
+                <input type="text" name="firstname" id="firstname" value="" />
+            </p>
+            <p>
+                <label for="lastname">'.$this->__('Last Name').':</label>
+                <input type="text" name="lastname" id="lastname" value="" />
+            </p>
+            <h4>'.$this->__("OR").'</h4>
+            <p>
+                <label for="registryid">'.$this->__('Registry ID').':</label>
+                <input type="text" name="registry_id" id="registryid" value="" />
+            </p>
+			&nbsp;
+            <p class="block-poll">
+                <button class="button" type="submit"><span><span>'.$this->__('Search').'</span></span></button>
+            </p>';
+}   
+    
+             
+if(!Mage::helper('webtexgiftregistry')->isCustomerLogIn() || !Mage::helper('webtexgiftregistry')->isRegistry()) 
+{ 
+            $beforeText .= '<a href="'. $this->getRegistrationUrl() .'">'.$this->__('Create a Gift Registry').'</a>';
+} 
+             
+if(!Mage::helper('webtexgiftregistry')->isCustomerLogIn() || Mage::helper('webtexgiftregistry')->isRegistry()) 
+{ 
+            $beforeText .= '<a href="'. $this->getViewUrl() .'">'.$this->__('View My Gift Registry').'</a>';
+} 
+
+if(Mage::helper('webtexgiftregistry')->isRegistry()) 
+{
+    $beforeText .= '<a href="'. $this->getUrl('webtexgiftregistry/index/searchRegistry') .'">'.$this->__('Find a Gift Registry').'</a>';
+}  
+
+$beforeText .= '</form>
+    </div>
+</div>
+'; ?>
+
+<?php $text = $this->__('Gift Registry');
+$this->addLink($text, '#', $text, false, array(), 30, null, array('id' => 'giftRegistryLink'), $beforeText, ''); ?>
+
+<?php $_links = $this->getLinks(); ?>
+<?php if(count($_links)>0): ?>
+
+		
+	
+<ul class="links"<?php if($this->getName()): ?> id="<?php echo $this->getName() ?>"<?php endif;?>>
+<?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
+<ul class="head-cart">	
+<li>
+<?php $_cartQty = $this->helper('checkout/cart')->getSummaryCount(); ?>	
+<a class="top-link-cart" id="cart-slide"  href="javascript:void:;">		
+	<span><?php if ($_cartQty==0): ?>		
+		<?php echo $this->__('0', $_cartQty) ?>		
+	<?php else: ?>		
+		<?php echo $this->__('%s', $_cartQty) ?>		
+	<?php endif ?>		
+	</span>		
+	<?php echo $this->__('my bag'); ?>	</a> 
+	<div class="mini-cart">
+	<?php echo $this->getLayout()->createBlock('checkout/cart_sidebar')->setTemplate('checkout/cart/mini-cart.phtml')->toHtml(); ?>
+	</div></li></ul>
+<?php endif; ?>
+<li>
+	<?php if (Mage::getSingleton('customer/session')->isLoggedIn()==0): ?>
+    <a id="pop" href="javascript:;" onclick="jQuery('#overlay_form').fadeIn(1000);positionPopup();"><?php echo $this->__('Sign In') ?></a>
+	<div id="overlay_form">
+    <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('pop-up')->toHtml() ?>
+    </div>
+    <?php else: ?>
+    <a href="<?php echo $this->getUrl('customer/account/logout') ?>"><span class="btn-log">Sign out</span></a>
+    <?php endif; ?>	
+</li>
+    <?php foreach($_links as $_link): ?>
+        <?php if ($_link instanceof Mage_Core_Block_Abstract):?>
+            <?php echo $_link->toHtml() ?>
+        <?php else: ?>
+			<?php if(trim($_link->getLabel()) == 'My Account' && Mage::getSingleton('customer/session')->isLoggedIn()==0){}else{ ?>
+            <li <?php if(($_link->getLabel() == "Gift Registry") && Mage::getSingleton('customer/session')->isLoggedIn()==0){ ?>class="gift"<?php } ?><?php if($_link->getIsFirst()||$_link->getIsLast()): ?> class="<?php if($_link->getIsFirst()): ?>first<?php endif; ?><?php if($_link->getIsLast()): ?>gift<?php endif; ?>"<?php endif; ?> <?php echo $_link->getLiParams() ?>><?php echo $_link->getBeforeText() ?><a href="<?php echo $_link->getUrl() ?>" title="<?php echo $_link->getTitle() ?>" <?php echo $_link->getAParams() ?>><?php echo $_link->getLabel() ?></a><?php echo $_link->getAfterText() ?></li>
+        <?php } endif;?>
+    <?php endforeach; ?>
+</ul>
+<?php endif; ?>

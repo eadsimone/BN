@@ -1,0 +1,3 @@
+.products-grid li.item, .products-list li.item{position:relative;z-index:1;overflow: visible;}
+.quicksee-container{position:absolute;left:-40px;top:-70px;background:#fff;border:1px solid #9dcd2a;padding:25px;z-index:3;}
+.products-grid li.item.hover, .products-list li.item.hover{z-index:2;}

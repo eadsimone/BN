@@ -1,0 +1,17 @@
+<?php
+    $object = $this->getObject();
+    $quicksee = $object['quicksee'];
+   
+    $product = $object['product'];
+    $processorQuicksee = Mage::getModel('quicksee/filter');
+    $objectFilter = new Varien_Object();
+   
+    $objectFilter->setData('product',$product);
+	$objectFilter->setData('text',$quicksee->getContent());
+
+	$width = Mage::getStoreConfig('quicksee/general/container_width');	
+	$height = Mage::getStoreConfig('quicksee/general/container_height');	
+?>
+<div class="quicksee-container" style="display:none;<?php if($width):?>width:<?php echo $width; ?>px;<?php endif;?><?php if($height):?>height:<?php echo $height; ?>px;<?php endif;?>">
+	<?php echo $processorQuicksee->filter($objectFilter);?>
+</div>

@@ -1,0 +1,48 @@
+/**
+ *
+ * NOTICE OF LICENSE
+ *
+ * This file is subject to the license
+ * that is bundled with this package in the file LICENSE_Temgra.txt.
+ * If you did not receive a copy of the license, please send an email
+ * to info@temgra.com so we can send you a copy immediately.
+ *
+ * @copyright Copyright (c) 2009-2011 by Tania Alekova, temgra.com - Templates and Graphics Online Store (http://www.temgra.com) - All rights reserved.
+ * @license   http://www.temgra.com/license
+ * 
+ */
+#page-background {position: fixed; top: 0; left: 0; background: #fff; width: 100%; height: 100%; z-index: 1000; visibility: visible; filter: alpha(opacity=95); opacity: 0.95; -moz-opacity: 0.95; pointer: cursor;}
+#quick-view {position: absolute; width: 500px; height: 400px; top: 100px; left: 50%; border: none; background: transparent; padding: 0; margin: 0; margin-left: -275px; z-index: 2000;}
+#quick-view #header1, #quick-view #header2 {position: absolute; height: 31px; border: none; top: 0; background: transparent; color: #747474; padding: 0; overflow: hidden;}
+#quick-view #header1 {left: 0; width: 95px; z-index: 4; background-image: url(../images/quickview/tab-non-active.png); background-repeat: no-repeat;}
+#quick-view #header2 {left: 97px; width: 95px; z-index: 3; background-image: url(../images/quickview/tab-non-active.png); background-repeat: no-repeat;}
+#quick-view #header1 span, #quick-view #header2 span {padding: 5px 10px; position: absolute; font-weight: bold; font-family: sans-serif; font-size: 12px; }
+#quick-view #close {position: absolute; border: none; width: 30px; height: 30px; top: 0; right: 0; background-image: url(../images/quickview/close.png); background-repeat: no-repeat;}
+#quick-view #header1.active, #quick-view #header2.active {background-image: url(../images/quickview/tab-active.png); background-repeat: no-repeat;}
+#quick-view #container {position: absolute; padding: 0; top: 30px; border: none; width: 498px; height: 368px;}
+#quick-view #content1, #quick-view #content2 {position: absolute; top: 0; width: 498px; height: 368px; overflow: auto; background: #fff; border: 1px solid #ccc; z-index: 1; }
+#quick-view #content1 {z-index: 2;}
+#quick-view #content2 {z-index: 1;}
+#quick-view .content {padding: 15px;}
+#quick-view-content {position: relative; height: 100%; width: 100%; padding: 0; margin: 0; background: transparent; overflow: hidden; text-align: left;}
+.product-image {position: relative;}
+.quick-view-button {height: 35px; width: 133px; color: #999; z-index: 999; visibility: hidden; background-image: url(../images/quickview/quick-view-button.png); background-repeat: no-repeat; font-weight: bold; padding-top: 5px; font-family: sans-serif; font-size: 12px; padding-left: 0px; position: absolute; top: 10px; left: 40px;}
+#quickview-col-left {width: 70%; float: left; background: url(../images/quickview/loading.gif) no-repeat 170px 150px;}
+#quickview-col-right {width: 25%; float: right;}
+#quick-view #more-views {width: 100%;}
+#quick-view #more-views ul li {padding: 0 5px; float: left;}
+#quick-view #more-views img.additional-image {border: 1px solid #fff;}
+#quick-view #more-views img.additional-image-selected {border: 1px solid #ccc;}
+#quick-view .product-shop {float: left; margin-top: 20px;}
+#quick-view .availability {margin: 0 0 20px 0;}
+#quick-view .availability .in-stock {}
+#quick-view .availability .out-of-stock {color: red;}
+#quick-view .description {margin-top: 0px;}
+#quick-view .info {margin-bottom: 10px; height: 16px; display: block; height: 20px; margin-bottom: 5px;}
+#quick-view .info .link {float: left; height: 20px;}
+#quick-view .info .link button {float: left;}
+#quick-view .price-box {padding: 5px 0;}
+#quick-view h3 {padding-bottom:14px;}
+#loading-image {position: absolute; width: 498px; height: 368px; top: 80px; left: 50%; border: none; z-index: 1999; margin-left: -275px; background: url(../images/quickview/loading.gif) no-repeat 50% 50%;}
+#loading-image table {border: none; width: 100%; height: 100%;}
+#loading-image table tr td {vertical-align: middle;}

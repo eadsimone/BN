@@ -1,0 +1,42 @@
+<?php
+/**
+ *
+ * NOTICE OF LICENSE
+ *
+ * This file is subject to the license
+ * that is bundled with this package in the file LICENSE_Temgra.txt.
+ * If you did not receive a copy of the license, please send an email
+ * to info@temgra.com so we can send you a copy immediately.
+ *
+ * @copyright Copyright (c) 2009-2011 by Tania Alekova, temgra.com - Templates and Graphics Online Store (http://www.temgra.com) - All rights reserved.
+ * @license   http://www.temgra.com/license
+ * 
+ */
+?>
+<?php $a14=$this->helper('quickview')->get('a04');$a15=$this->helper('quickview')->get('a05');$a16=$a14-2;$a17=$a15-32;$a18=$a16.'px';$a19=$a17.'px';?>
+<?php $product = $this->getQuickViewProduct(); ?>
+<?php if ($product): ?>	
+	<div id="header1" class="active" onclick="qv.a16(1)" onmouseover="this.style.cursor='pointer'"><span><?php echo $this->__('Overview')?></span></div>
+	<div id="header2"onclick="qv.a16(2)" onmouseover="this.style.cursor='pointer'"><span><?php echo $this->__('Description')?></span></div>
+	<div id="close" onmouseover="this.style.cursor='pointer'" onclick="qv.a12()"></div>
+	<div id="container" style="width:<?php echo $a18;?>; height:<?php echo $a19;?>">
+		<div id="content1" style="width:<?php echo $a18;?>; height:<?php echo $a19;?>;">
+			<div class="content">
+				<h3><?php echo $this->htmlEscape($product->getName()) ?></h3>
+				<div id="quickview-col-left">
+					<?php echo $this->getChildHtml('quickview.media') ?>
+				</div>				
+				<div id="quickview-col-right">
+					<?php echo $this->getChildHtml('quickview.price') ?>
+					<?php echo $this->getChildHtml('quickview.info') ?>				
+				</div>
+			</div>
+		</div>
+		<div id="content2" style="width:<?php echo $a18;?>; height:<?php echo $a19;?>;">
+			<div class="content">
+				<h3><?php echo $this->htmlEscape($product->getName()) ?></h3>
+				<div class="description"><?php echo $product->getDescription(); ?></div>
+			</div>
+		</div>
+	</div>
+<?php endif; ?>

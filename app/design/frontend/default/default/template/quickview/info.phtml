@@ -1,0 +1,42 @@
+<?php
+/**
+ *
+ * NOTICE OF LICENSE
+ *
+ * This file is subject to the license
+ * that is bundled with this package in the file LICENSE_Temgra.txt.
+ * If you did not receive a copy of the license, please send an email
+ * to info@temgra.com so we can send you a copy immediately.
+ *
+ * @copyright Copyright (c) 2009-2011 by Tania Alekova, temgra.com - Templates and Graphics Online Store (http://www.temgra.com) - All rights reserved.
+ * @license   http://www.temgra.com/license
+ * 
+ */
+?>
+<?php $a20 = $this->helper('quickview')->get('a12'); ?>
+<?php $a21 = $this->helper('quickview')->get('a13'); ?>
+<?php $_product = $this->getProduct() ?>
+<div class="product-shop"> 
+	<?php if ($a20): ?>
+	<?php if($_product->isSaleable()): ?>
+	<div class="availability"><?php echo $this->__('Availability') . ': ' ?><span class="in-stock"><?php echo $this->__('In stock') ?></span></div>
+	
+	<?php if(!$_product->isGrouped()): ?>
+       <label for="qty"><?php echo $this->__('Quantity:') ?></label>
+        <input type="text" name="qty" id="qty" maxlength="12" value="1" title="<?php echo $this->__('Qty') ?>" class="input-text qty" /> 
+        <?php endif; ?> 
+	<p><button type="button" title="<?php echo $this->__('Add to Cart') ?>" class="button btn-cart" onclick="setLocation('<?php echo $this->getAddToCartUrl($_product) ?>')"><span><span><?php echo $this->__('Add to Cart') ?></span></span></button></p>
+	
+	<?php else: ?>
+	<div class="availability"><?php echo $this->__('Availability') . ': ' ?><span class="out-of-stock"><?php echo $this->__('Out of stock') ?></span></div>
+	<?php endif; ?>
+	<?php endif; ?>
+	<div class="clear"></div>
+	<?php if ($a21): ?>
+	<div class="info"> 
+		<div class="link"><a href="<?php echo $_product->getProductUrl(); ?>"><?php echo $this->__("Go to product's page") ?></a></div>
+	</div>
+	<?php endif; ?>
+	
+	
+</div>
